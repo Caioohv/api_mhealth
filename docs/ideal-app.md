@@ -26,7 +26,7 @@ O app deve:
 - Permitir que o idoso consulte um relatório de remédios e responsabilidades futuras, cumpridas e atrasadas
 - Modo "Ajuda" - botão grande para ligar para familiar/cuidador
 
-### Para o familiar
+### Para o familiar (chamaremos de responsáveis)
 
 O app deve:
 - Permitir que o familiar crie sua conta e cadastre o idoso e outros familiares
@@ -42,30 +42,17 @@ Para os seguintes, verificar se é válido:
 - Permitir que o familiar insira orientações para o idoso 
 - Permitir que o familiar gerencie Medicações, consultas, procedimentos, metas (gerenciar: Criar, editar, apagar)
 
-### Para o cuidador 
-
-O app deve:
+Além disso, o familiar deve ser responsável por cuidar:
 - Permitir que o cuidador crie sua conta e associe um ou mais idosos
 - Permitir que o cuidador acesse a página de gestão de cada idoso
 - Permitir que o cuidador insira orientações para o idoso
 - Permitir que o cuidador faça a gestão de medicações, consultas, procedimentos, metas
 - Checklist diário (tarefas além de medicação: banho, alimentação, exercícios)
 - Registro de ocorrências (quedas, mal-estar, recusas)
-- 
-
-### Para o médico
-
-O app deve:
-- Permitir que o médico crie sua conta e associe um ou mais idosos
-- Permitir que o médico armazene receitas, resultados de exame, histórico, etc. de forma que outros médicos possam consultar
-- Permitir que o médico gerencie medicações, consultas, procedimentos, metas
-- Permitir que o médico visualize informações sobre o idoso
-- Permitir que o médico visualize um dashboard informativo próprio, que trás informações dos idosos de seu domínio (ex. próximas consultas, necessidade de retorno, etc.)
-
 
 ### Em resumo:
 Cuidador > Familiar na gestão OPERACIONAL do dia a dia
-Familiar > Cuidador em decisões ESTRATÉGICAS (trocar médico, cuidador, cancelar medicação)
+Familiar > Cuidador em decisões ESTRATÉGICAS (trocar cuidador, cancelar medicação)
 
 
 # Ideias a mais:
