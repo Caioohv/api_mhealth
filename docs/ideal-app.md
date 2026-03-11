@@ -1,86 +1,62 @@
-# Ideal do app
+# Ideal do app: Rede de Apoio
 
-A ideia é basicamente unir idosos a cuidadores, médicos, familiares, etc.
+A essência do aplicativo é a criação de uma **Rede de Apoio** centrada no cuidado ao idoso. Em vez de papéis rígidos e pré-definidos, o app utiliza um sistema flexível de convites e permissões granulares.
 
-O app conta, então, com 4 entidades básicas:
-1. Idoso
-2. Familiar(es)
-3. Médico(s)
-4. Cuidador(es)
+A estrutura conta com 2 tipos de perfis básicos:
+1. **Idoso**: O centro do cuidado, foco em execução e alertas.
+2. **Responsáveis**: Pessoas da rede que auxiliam no cuidado (podem ser familiares, cuidadores profissionais, médicos, vizinhos, etc).
 
-Além disso, o aplicativo apresentará funcionalidades referentes aos seguintes domínios:
-1. Medicações
-2. Consultas
-3. Procedimentos
-4. Metas (ex. exercícios, sono, ...)
+## A Rede de Apoio
 
-Por fim, o app irá conter e apresentar informações úteis sobre assuntos, em uma 'pasta de artigos' (algo como um blog).
+Qualquer usuário (Idoso ou Responsável) pode iniciar uma **Rede de Apoio**. 
 
-### Para o idoso
+### Dinâmica de Convites
+- O criador da rede convida outros participantes via WhatsApp ou QR Code.
+- No momento do convite são atribuídas **permissões específicas** para o novo membro.
 
-O app deve:
-- Lembrar o idoso de remédios no dia
-- Lembrar o idoso de responsabilidades da semana (ex. consultas)
-- Registrar quando o idoso toma o remédio
-- Registrar quando o idoso cumpre uma responsabilidade da semana
-- Permitir que o idoso consulte um relatório de remédios e responsabilidades futuras, cumpridas e atrasadas
-- Modo "Ajuda" - botão grande para ligar para familiar/cuidador
+### Sistema de Permissões
+As permissões podem ser configuradas individualmente:
+- **Gestão de Medicação**: Criar, editar ou apenas visualizar horários.
+- **Registros Operacionais**: Registrar banho, alimentação, ocorrências.
+- **Dados Sensíveis**: Acesso a exames, laudos e notas médicas.
+- **Gestão da Rede**: Convidar novos membros ou editar permissões de terceiros.
+- **Alertas**: Definir quais tipos de notificações o usuário deve receber (ex: "apenas alertas de emergência" ou "alertas de medicação atrasada").
 
-### Para o familiar (chamaremos de responsáveis)
+---
 
-O app deve:
-- Permitir que o familiar crie sua conta e cadastre o idoso e outros familiares
-  - Ex. Eu crio minha conta. Crio o acesso para o idoso que quero cuidar, e permito outros familiares a acessarem a mesma 'rede'.
-  - A ideia é fazer associações entre idoso - familiar - cuidador - médico
-- Permitir que o familiar consulte o relatório do idoso
-- Notificações quando idoso NÃO toma medicação no horário
-- Notificações de eventos importantes (consulta hoje, medicação atrasada)
-- Histórico de quem fez cada ação (auditoria)
-- Permissões granulares (familiar A pode editar, familiar B só visualiza)
+## Funcionalidades por Domínio
 
-Para os seguintes, verificar se é válido:
-- Permitir que o familiar insira orientações para o idoso 
-- Permitir que o familiar gerencie Medicações, consultas, procedimentos, metas (gerenciar: Criar, editar, apagar)
+O aplicativo organiza as atividades nos seguintes domínios:
+1. **Medicações**: Lembretes, estoque e registro de ingestão.
+2. **Consultas**: Agendamento e histórico de visitas médicas.
+3. **Procedimentos**: Fisioterapia, curativos, exames.
+4. **Metas e Hábitos**: Exercícios, sono, hidratação.
+5. **Pasta de Artigos**: Conteúdo educativo (blog) sobre saúde na terceira idade.
 
-Além disso, o familiar deve ser responsável por cuidar:
-- Permitir que o cuidador crie sua conta e associe um ou mais idosos
-- Permitir que o cuidador acesse a página de gestão de cada idoso
-- Permitir que o cuidador insira orientações para o idoso
-- Permitir que o cuidador faça a gestão de medicações, consultas, procedimentos, metas
-- Checklist diário (tarefas além de medicação: banho, alimentação, exercícios)
-- Registro de ocorrências (quedas, mal-estar, recusas)
+---
 
-### Em resumo:
-Cuidador > Familiar na gestão OPERACIONAL do dia a dia
-Familiar > Cuidador em decisões ESTRATÉGICAS (trocar cuidador, cancelar medicação)
+## Experiência do Usuário
 
+### Para o Idoso (Perfil Focado em Execução)
+- **Dashboard Simplificado**: Foco no "que devo fazer agora?".
+- **Registro Fácil**: Botões grandes para confirmar tomada de remédio ou cumprimento de tarefas.
+- **Modo Ajuda**: Botão SOS em destaque que notifica toda a rede ou membros específicos com permissão de "Emergência".
+- **Relatório de Adesão**: Visualização clara de seu progresso e metas.
 
-# Ideias a mais:
+### Para os Responsáveis (Perfil Focado em Gestão/Suporte)
+- **Gestão Longitudinal**: Criação e ajuste de planos de medicação e rotinas.
+- **Monitoramento em Tempo Real**: Notificações de tarefas cumpridas ou atrasadas.
+- **Auditoria**: Histórico de "quem fez o quê" (ex: "Neto registrou o remédio das 08h", "Cuidador registrou o banho").
+- **Diário de Ocorrências**: Registro de quedas, mal-estar ou observações comportamentais relevantes para a rede.
 
-- Convites por email/whatsapp para outros familiares
-- Divisão de custos (rachar gastos de medicamentos/consultas)
-- Agenda compartilhada (quem vai levar na consulta)
-- Notas/observações sobre o idoso (ex: "hoje estava confuso")
-- Timeline de eventos (linha do tempo visual)
-- Modo profissional: estatísticas de todos os idosos gerenciados
-- Scan de receitas médicas via câmera
-- Registro de horário de entrada/saída (para cuidadores pagos)
-- Notificações de fim de estoque de medicamentos
-- Upload de receitas/prescrições (PDF/imagem)
-- OCR para digitalizar receitas automaticamente
-- Histórico de medicações anteriores (o que já tentou)
-- Gráficos de evolução (glicose, pressão ao longo do tempo)
-- Exportar relatório completo em PDF
-- Adesão do paciente ao tratamento (% de medicações tomadas)
-- Alertas de NÃO adesão (paciente não está tomando remédios)
-- Integração com outros médicos (ver o que cardiologista prescreveu)
-- Notas médicas privadas (não visíveis para família)
+---
 
-### Dashboard do médico deve mostrar:
-- Idosos com consulta esta semana
-- Idosos com baixa adesão (<80%)
-- Idosos que precisam renovar receita
-- Medicações próximas de acabar
-- Exames pendentes
-- Interações medicamentosas detectadas
+## Diferenciais e Ideias Futuras
 
+- **Scan e OCR**: Digitalização de receitas médicas para criação automática de cronogramas.
+- **Agenda Compartilhada**: Sistema de "Vagas/Escalabilidade" para definir quem da rede levará o idoso a uma consulta.
+- **Divisão de Custos**: Gestão financeira compartilhada de medicamentos e serviços.
+- **Time-line Visual**: Linha do tempo com fotos e notas sobre o dia a dia do idoso.
+- **Modo Profissional**: Para usuários que participam de múltiplas redes de apoio (ex: um médico ou cuidador com vários pacientes).
+- **Relatórios Exportáveis**: Geração de PDF consolidado para levar em consultas médicas.
+- **Monitoramento de Adesão**: Alerta crítico quando a taxa de medicação tomada cai abaixo de um patamar seguro (ex: 80%).

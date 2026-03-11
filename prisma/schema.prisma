@@ -8,11 +8,132 @@ generator client {
 datasource db {
   provider = "mysql"
 }
-// exemplo
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
+
+enum UserRole {
+  IDOSO
+  RESPONSAVEL
+}
+
+Wait, the prompt says "the user most recently edited the file at api_mhealth/prisma/schema.prisma".
+
+If I look at the current state of the file provided in the context:
+1. `generator`
+2. `datasource`
+3. `enum UserRole`
+4. `<|cursor|>`
+5. `model Network`
+6. `model NetworkMember`
+
+The `User` model is missing from the file. The user provided the code for it in the prompt.
+So I should definitely provide the `User` model at the cursor.
+
+Should I also provide the `NetworkMember` model? But `Network` is in between.
+If I provide `User`, then `Network` is already there. Then `NetworkMember
+
+model Network {
+  id          String   @id @default(uuid())
+  name        String   // Usually "Rede do [Nome do Idoso]"
+  
+  // Relationships
+  members     NetworkMember[]
+  medications Medication[]
+  appointments Appointment[]
+  occurrences  Occurrence[]
+  invitations  Invitation[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("networks")
+}
+
+model NetworkMember {
+  id        String   @id @default(uuid())
+  userId    String
+  networkId String
+  
+  // Granular Permissions
+  canManageMedication    Boolean @default(false)
+  canViewMedication      Boolean @default(true)
+  canManageRecords       Boolean @default(false) // Procedures, goals
+  canViewRecords         Boolean @default(true)
+  canAccessSensitiveData Boolean @default(false) // Notes, PDF reports
+  canManageNetwork       Boolean @default(false) // Invite/Remove members
+  isEmergencyContact     Boolean @default(false) // Receives SOS alerts
+
+  // Relationships
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  network   Network  @relation(fields: [networkId], references: [id], onDelete: Cascade)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([userId, networkId])
+  @@map("network_members")
+}
+
+model Invitation {
+  id              String   @id @default(uuid())
+  networkId       String
+  token           String   @unique // For QR Code / WhatsApp Link
+  
+  // Permissions to be granted when accepted (stored as bits or individual fields)
+  // For simplicity here, we'll store the core intended role
+  roleToGrant     UserRole @default(RESPONSAVEL)
+  
+  expiresAt       DateTime
+  usedAt          DateTime?
+  
+  network         Network  @relation(fields: [networkId], references: [id], onDelete: Cascade)
+
+  @@map("invitations")
+}
+
+model Medication {
+  id          String   @id @default(uuid())
+  networkId   String
+  name        String
+  dosage      String
+  frequency   String
+  instructions String? @db.Text
+  stock       Int      @default(0)
+  
+  network     Network  @relation(fields: [networkId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("medications")
+}
+
+model Appointment {
+  id          String   @id @default(uuid())
+  networkId   String
+  title       String
+  description String?  @db.Text
+  date        DateTime
+  location    String?
+  
+  network     Network  @relation(fields: [networkId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("appointments")
+}
+
+model Occurrence {
+  id          String   @id @default(uuid())
+  networkId   String
+  title       String
+  description String   @db.Text
+  date        DateTime @default(now())
+  severity    String   @default("NORMAL") // NORMAL, CRITICAL
+  
+  network     Network  @relation(fields: [networkId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("occurrences")
 }
