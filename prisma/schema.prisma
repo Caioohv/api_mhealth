@@ -8,11 +8,289 @@ generator client {
 datasource db {
   provider = "mysql"
 }
-// exemplo
+
+// ----------------------------------------------------------------------------
+// Enums
+// ----------------------------------------------------------------------------
+
+enum NetworkRole {
+  RESPONSAVEL
+  ASSISTIDO
+}
+
+enum AlertLevel {
+  ALL
+  EMERGENCY_ONLY
+  NONE
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELED
+}
+
+enum PermissionLevel {
+  NONE
+  VIEW
+  EDIT
+}
+
+enum ConsultationType {
+  CONSULTA
+  PROCEDIMENTO
+}
+
+enum IntakeStatus {
+  TAKEN
+  MISSED
+  LATE
+}
+
+enum OccurrenceType {
+  QUEDA
+  MAL_ESTAR
+  OBSERVACAO
+}
+
+enum HabitFrequency {
+  DAILY
+  WEEKLY
+  CUSTOM
+}
+
+enum EmergencyStatus {
+  ACTIVE
+  RESOLVED
+  CANCELED
+}
+
+// ----------------------------------------------------------------------------
+// Core Domain: User & Auth
+// ----------------------------------------------------------------------------
+
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String    @id @default(uuid())
+  email         String?   @unique
+  passwordHash  String?
+  googleId      String?   @unique
+  name          String
+  phone         String?   @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relacionamentos: Redes das quais faz parte
+  networkMembers NetworkMember[]
+
+  // Relacionamentos: Redes criadas (dono)
+  createdNetworks SupportNetwork[] @relation("NetworkCreator")
+
+  // Convites enviados
+  sentInvitations Invitation[] @relation("InvitationSender")
+
+  // Auditoria / Ações
+  medicationIntakes MedicationIntake[]
+  occurrences       Occurrence[]
+  habitRecords      HabitRecord[]
+
+  // Alertas de emergência disparados
+  emergencyAlerts   EmergencyAlert[]
+}
+
+// ----------------------------------------------------------------------------
+// Core Domain: Support Network
+// ----------------------------------------------------------------------------
+
+model SupportNetwork {
+  id          String   @id @default(uuid())
+  name        String   // Ex: "Rede de Cuidados da Dona Maria"
+  description String?
+  creatorId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  creator     User            @relation("NetworkCreator", fields: [creatorId], references: [id])
+  members     NetworkMember[]
+  invitations Invitation[]
+
+  // Domínios relacionados à rede
+  medications     Medication[]
+  consultations   Consultation[]
+  occurrences     Occurrence[]
+  habits          Habit[]
+  emergencyAlerts EmergencyAlert[]
+}
+
+model NetworkMember {
+  id               String      @id @default(uuid())
+  userId           String
+  networkId        String
+  role             NetworkRole // RESPONSAVEL ou ASSISTIDO
+  joinedAt         DateTime    @default(now())
+
+  // Permissões Granulares (níveis de acesso)
+  medicationAccess     PermissionLevel @default(NONE)
+  consultationAccess   PermissionLevel @default(NONE)
+  networkAccess        PermissionLevel @default(NONE)
+  recordsAccess        PermissionLevel @default(NONE)
+  
+  // Nível de Alerta (emergência, todos, nenhum)
+  alertLevel           AlertLevel @default(ALL)
+
+  user               User           @relation(fields: [userId], references: [id])
+  network            SupportNetwork @relation(fields: [networkId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, networkId])
+}
+
+model Invitation {
+  id               String           @id @default(uuid())
+  networkId        String
+  inviterId        String
+  invitedEmail     String?
+  invitedPhone     String?
+  status           InvitationStatus @default(PENDING)
+  token            String           @unique @default(uuid())
+  
+  // Permissões e papéis propostos no momento do convite
+  proposedRole             NetworkRole
+  medicationAccess         PermissionLevel @default(NONE)
+  consultationAccess       PermissionLevel @default(NONE)
+  networkAccess            PermissionLevel @default(NONE)
+  recordsAccess            PermissionLevel @default(NONE)
+
+  createdAt        DateTime @default(now())
+  expiresAt        DateTime
+
+  network          SupportNetwork @relation(fields: [networkId], references: [id], onDelete: Cascade)
+  inviter          User           @relation("InvitationSender", fields: [inviterId], references: [id])
+}
+
+// ----------------------------------------------------------------------------
+// Domain: Medicações
+// ----------------------------------------------------------------------------
+
+model Medication {
+  id           String   @id @default(uuid())
+  networkId    String
+  name         String
+  dosage       String
+  needsBuy     Boolean  @default(false)
+  instructions String?  @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  network      SupportNetwork       @relation(fields: [networkId], references: [id], onDelete: Cascade)
+  schedules    MedicationSchedule[]
+  intakes      MedicationIntake[]
+}
+
+model MedicationSchedule {
+  id             String     @id @default(uuid())
+  medicationId   String
+  intervalHours  Int?       // Ex: a cada 8 horas
+  intervalDays   Int?       // Ex: a cada 2 dias
+  specificTimes  Json?      // Ex: ["08:00", "20:00"] para lidar com "1x ao dia" ou horários fixos
+  startDate      DateTime   @default(now()) // Para saber quando o primeiro ciclo começou
+  endDate        DateTime?  // Para tratamentos com duração definida (ex: antibiótico por 7 dias)
+  
+  medication   Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+}
+
+model MedicationIntake {
+  id           String       @id @default(uuid())
+  medicationId String
+  takenAt      DateTime     @default(now())
+  registeredBy String       // Referência ao usuário que confirmou
+  status       IntakeStatus // TAKEN, MISSED, LATE
+  notes        String?      @db.Text
+
+  medication   Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+  registrar    User       @relation(fields: [registeredBy], references: [id])
+}
+
+// ----------------------------------------------------------------------------
+// Domain: Consultas e Procedimentos
+// ----------------------------------------------------------------------------
+
+model Consultation {
+  id          String           @id @default(uuid())
+  networkId   String
+  type        ConsultationType @default(CONSULTA) // CONSULTA ou PROCEDIMENTO
+  title       String
+  date        DateTime
+  doctorName  String?
+  specialty   String?
+  notes       String?          @db.Text
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  network     SupportNetwork @relation(fields: [networkId], references: [id], onDelete: Cascade)
+}
+
+// ----------------------------------------------------------------------------
+// Domain: Ocorrências / Diário / Auditoria
+// ----------------------------------------------------------------------------
+
+model Occurrence {
+  id           String         @id @default(uuid())
+  networkId    String
+  title        String
+  description  String         @db.Text
+  type         OccurrenceType // QUEDA, MAL_ESTAR, OBSERVACAO
+  occurredAt   DateTime
+  registeredBy String
+  createdAt    DateTime       @default(now())
+
+  network      SupportNetwork @relation(fields: [networkId], references: [id], onDelete: Cascade)
+  registrar    User           @relation(fields: [registeredBy], references: [id])
+}
+
+// ----------------------------------------------------------------------------
+// Domain: Metas e Hábitos
+// ----------------------------------------------------------------------------
+
+model Habit {
+  id          String         @id @default(uuid())
+  networkId   String
+  name        String         // Ex. "Beber Água", "Fisioterapia", "Banho", "Alimentação"
+  description String?        @db.Text
+  frequency   HabitFrequency // DAILY, WEEKLY, CUSTOM
+  goal        Int?           // Ex: 2000 (ml de água), 3 (vezes na semana)
+  unit        String?        // Ex: "ml", "vezes", "minutos"
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  
+  network     SupportNetwork @relation(fields: [networkId], references: [id], onDelete: Cascade)
+  records     HabitRecord[]
+}
+
+model HabitRecord {
+  id           String   @id @default(uuid())
+  habitId      String
+  registeredBy String   // Quem registrou (assistido ou cuidador)
+  value        Int?     // O quanto foi feito (ex: 500 para 500ml de água). Null se for só "check"
+  notes        String?  @db.Text
+  completedAt  DateTime @default(now()) // Quando o hábito foi realizado
+
+  habit        Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  registrar    User     @relation(fields: [registeredBy], references: [id])
+}
+
+// ----------------------------------------------------------------------------
+// Domain: Emergência / SOS
+// ----------------------------------------------------------------------------
+
+model EmergencyAlert {
+  id           String          @id @default(uuid())
+  networkId    String
+  triggeredBy  String          // Quem disparou o alerta (geralmente o idoso)
+  message      String?         @db.Text // Mensagem opcional do alerta
+  status       EmergencyStatus @default(ACTIVE) // ACTIVE, RESOLVED, CANCELED
+  resolvedAt   DateTime?       // Quando foi resolvido
+  createdAt    DateTime        @default(now())
+
+  network      SupportNetwork @relation(fields: [networkId], references: [id], onDelete: Cascade)
+  triggeredByUser User        @relation(fields: [triggeredBy], references: [id])
 }
