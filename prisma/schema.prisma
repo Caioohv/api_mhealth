@@ -76,7 +76,6 @@ model User {
   passwordHash  String?
   googleId      String?   @unique
   name          String
-  avatarUrl     String?
   phone         String?   @unique
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -177,7 +176,7 @@ model Medication {
   networkId    String
   name         String
   dosage       String
-  stock        Int      @default(0)
+  needsBuy     Boolean  @default(false)
   instructions String?  @db.Text
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

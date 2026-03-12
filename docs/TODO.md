@@ -28,8 +28,7 @@
 
 ### 2.2 Perfil do Usuário
 - [ ] Endpoint `GET /users/me` — Dados do usuário logado
-- [ ] Endpoint `PATCH /users/me` — Atualizar nome, avatar, telefone
-- [ ] Upload de avatar (integração com serviço de armazenamento)
+- [ ] Endpoint `PATCH /users/me` — Atualizar nome, telefone
 
 ---
 
@@ -52,7 +51,7 @@
 - [ ] Endpoint `POST /networks/:id/invitations` — Criar convite (com role e permissões propostas)
 - [ ] Gerar link/token único para compartilhamento (WhatsApp, QR Code)
 - [ ] Endpoint `GET /invitations/:token` — Visualizar detalhes do convite (público)
-- [ ] Endpoint `POST /invitations/:token/accept` — Aceitar convite (cria `NetworkMember`)
+- [ ] Endpoint `POST /invitations/:token/accept` — Aceitar convite (Requer autenticação, cria `NetworkMember`)
 - [ ] Endpoint `POST /invitations/:token/reject` — Rejeitar convite
 - [ ] Endpoint `DELETE /invitations/:id` — Cancelar convite (apenas quem enviou)
 - [ ] Lógica de expiração de convites
@@ -65,7 +64,8 @@
 - [ ] Endpoint `POST /networks/:id/medications` — Cadastrar medicamento
 - [ ] Endpoint `GET /networks/:id/medications` — Listar medicamentos da rede
 - [ ] Endpoint `GET /medications/:id` — Detalhes de um medicamento (com schedules)
-- [ ] Endpoint `PATCH /medications/:id` — Editar medicamento
+- [ ] Endpoint `PATCH /medications/:id/toggle-buy` — Alternar o status "Precisa Comprar"
+- [ ] Endpoint `GET /networks/:id/medications/to-buy` — Listar apenas medicamentos que precisam ser comprados
 - [ ] Endpoint `DELETE /medications/:id` — Remover medicamento
 
 ### 4.2 Agendamentos (Schedules)
@@ -77,12 +77,11 @@
 ### 4.3 Registro de Ingestão (Intakes)
 - [ ] Endpoint `POST /medications/:id/intakes` — Registrar tomada (TAKEN, MISSED, LATE)
 - [ ] Endpoint `GET /medications/:id/intakes` — Histórico de ingestão
-- [ ] Atualizar estoque automaticamente ao registrar `TAKEN`
+- [ ] Endpoint `GET /medications/:id/pending` — Filtrar horários pendentes de confirmação (atrasos sem registro)
 
 ### 4.4 Alertas e Monitoramento
 - [ ] Lógica de alerta de medicação atrasada (comparar horário atual × schedule)
-- [ ] Alerta de estoque baixo
-- [ ] Cálculo de taxa de adesão (% de TAKEN vs total esperado)
+- [ ] Alerta de "Precisa Comprar" (baseado no booleano do medicamento)
 
 ---
 
