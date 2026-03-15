@@ -8,11 +8,11 @@
 ## 1. Infraestrutura e Configuração Inicial
 
 - [ ] Rodar migration inicial do Prisma (`npx prisma migrate dev`)
-- [ ] Gerar o Prisma Client (`npx prisma generate`)
-- [ ] Configurar variáveis de ambiente (`.env` com `DATABASE_URL`, `JWT_SECRET`, `GOOGLE_CLIENT_ID`)
-- [ ] Configurar estrutura de pastas (controllers, services, middlewares, validators)
-- [ ] Configurar middleware de tratamento de erros global
-- [ ] Configurar CORS e rate limiting
+- [x] Gerar o Prisma Client (`npx prisma generate`)
+- [x] Configurar variáveis de ambiente (`.env` com `DATABASE_URL`, `JWT_SECRET`, `GOOGLE_CLIENT_ID`)
+- [x] Configurar estrutura de pastas (controllers, services, middlewares, validators)
+- [x] Configurar middleware de tratamento de erros global
+- [x] Configurar CORS e rate limiting
 
 ---
 
