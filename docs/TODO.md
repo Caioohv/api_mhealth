@@ -19,16 +19,16 @@
 ## 2. Autenticação e Gestão de Usuários
 
 ### 2.1 Registro e Login
-- [ ] Endpoint `POST /auth/register` — Registro com email/senha
-- [ ] Hash de senha (bcrypt)
-- [ ] Endpoint `POST /auth/login` — Login com email/senha
-- [ ] Geração e validação de JWT (access token + refresh token)
-- [ ] Endpoint `POST /auth/google` — Login/Registro via Google OAuth
-- [ ] Middleware de autenticação (`authMiddleware`) para rotas protegidas
+- [x] Endpoint `POST /auth/register` — Registro com email/senha
+- [x] Hash de senha (bcrypt)
+- [x] Endpoint `POST /auth/login` — Login com email/senha
+- [x] Geração e validação de JWT (access token + refresh token)
+- [x] Endpoint `POST /auth/google` — Login/Registro via Google OAuth
+- [x] Middleware de autenticação (`authMiddleware`) para rotas protegidas
 
 ### 2.2 Perfil do Usuário
-- [ ] Endpoint `GET /users/me` — Dados do usuário logado
-- [ ] Endpoint `PATCH /users/me` — Atualizar nome, telefone
+- [x] Endpoint `GET /users/me` — Dados do usuário logado
+- [x] Endpoint `PATCH /users/me` — Atualizar nome, telefone
 
 ---
 

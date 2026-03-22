@@ -4,9 +4,12 @@ const cors = require('cors')
 
 const privateRoutes = require('../routes/private')
 const publicRoutes = require('../routes/public')
+const authRoutes = require('../routes/auth')
+const userRoutes = require('../routes/users')
 
 const limiter = require('../middlewares/rateLimiter')
 const errorMiddleware = require('../middlewares/errorMiddleware')
+const authMiddleware = require('../middlewares/authMiddleware')
 
 morgan.token('statusColor', (req, res, args) => {
   var status = (typeof res.headersSent !== 'boolean' ? Boolean(res.header) : res.headersSent)
@@ -37,7 +40,14 @@ module.exports = (app) => {
   // Rate limiting global
   app.use(limiter)
 
+  // Auth routes (public)
+  authRoutes(app)
+
+  // Private routes (protected by authMiddleware)
+  app.use('/api', authMiddleware)
+  userRoutes(app)
   privateRoutes(app)
+
   publicRoutes(app)
 
   // Middleware global de erro (deve ser o último)
