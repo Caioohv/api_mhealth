@@ -35,26 +35,26 @@
 ## 3. Rede de Apoio (Core)
 
 ### 3.1 CRUD da Rede
-- [ ] Endpoint `POST /networks` — Criar uma rede de apoio
-- [ ] Endpoint `GET /networks` — Listar redes das quais o usuário faz parte
-- [ ] Endpoint `GET /networks/:id` — Detalhes de uma rede (membros, resumo)
-- [ ] Endpoint `PATCH /networks/:id` — Editar nome/descrição da rede
-- [ ] Endpoint `DELETE /networks/:id` — Excluir rede (apenas criador)
+- [x] Endpoint `POST /networks` — Criar uma rede de apoio
+- [x] Endpoint `GET /networks` — Listar redes das quais o usuário faz parte
+- [x] Endpoint `GET /networks/:id` — Detalhes de uma rede (membros, resumo)
+- [x] Endpoint `PATCH /networks/:id` — Editar nome/descrição da rede
+- [x] Endpoint `DELETE /networks/:id` — Excluir rede (apenas criador)
 
 ### 3.2 Membros da Rede
-- [ ] Endpoint `GET /networks/:id/members` — Listar membros e suas permissões
-- [ ] Endpoint `PATCH /networks/:id/members/:memberId` — Editar permissões/role de um membro
-- [ ] Endpoint `DELETE /networks/:id/members/:memberId` — Remover membro da rede
-- [ ] Middleware de autorização por permissão (`checkPermission`)
+- [x] Endpoint `GET /networks/:id/members` — Listar membros e suas permissões
+- [x] Endpoint `PATCH /networks/:id/members/:memberId` — Editar permissões/role de um membro
+- [x] Endpoint `DELETE /networks/:id/members/:memberId` — Remover membro da rede
+- [x] Middleware de autorização por permissão (`checkPermission`)
 
 ### 3.3 Sistema de Convites
-- [ ] Endpoint `POST /networks/:id/invitations` — Criar convite (com role e permissões propostas)
-- [ ] Gerar link/token único para compartilhamento (WhatsApp, QR Code)
-- [ ] Endpoint `GET /invitations/:token` — Visualizar detalhes do convite (público)
-- [ ] Endpoint `POST /invitations/:token/accept` — Aceitar convite (Requer autenticação, cria `NetworkMember`)
-- [ ] Endpoint `POST /invitations/:token/reject` — Rejeitar convite
-- [ ] Endpoint `DELETE /invitations/:id` — Cancelar convite (apenas quem enviou)
-- [ ] Lógica de expiração de convites
+- [x] Endpoint `POST /networks/:id/invitations` — Criar convite (com role e permissões propostas)
+- [x] Gerar link/token único para compartilhamento (WhatsApp, QR Code)
+- [x] Endpoint `GET /invitations/:token` — Visualizar detalhes do convite (público)
+- [x] Endpoint `POST /invitations/:token/accept` — Aceitar convite (Requer autenticação, cria `NetworkMember`)
+- [x] Endpoint `POST /invitations/:token/reject` — Rejeitar convite
+- [x] Endpoint `DELETE /invitations/:id` — Cancelar convite (apenas quem enviou)
+- [x] Lógica de expiração de convites
 
 ---
 

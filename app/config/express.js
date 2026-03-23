@@ -6,6 +6,8 @@ const privateRoutes = require('../routes/private')
 const publicRoutes = require('../routes/public')
 const authRoutes = require('../routes/auth')
 const userRoutes = require('../routes/users')
+const networkRoutes = require('../routes/networks')
+const invitationRoutes = require('../routes/invitations')
 
 const limiter = require('../middlewares/rateLimiter')
 const errorMiddleware = require('../middlewares/errorMiddleware')
@@ -42,10 +44,12 @@ module.exports = (app) => {
 
   // Auth routes (public)
   authRoutes(app)
+  invitationRoutes(app)
 
   // Private routes (protected by authMiddleware)
   app.use('/api', authMiddleware)
   userRoutes(app)
+  networkRoutes(app)
   privateRoutes(app)
 
   publicRoutes(app)
