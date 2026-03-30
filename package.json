@@ -4,13 +4,14 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "cross-env DEVMODE=true nodemon index.js",
+    "test": "cross-env NODE_ENV=test DATABASE_URL=file:./test.db jest",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "prisma:push": "prisma db push",
-    "prisma:seed": "prisma db seed"
+    "prisma:seed": "prisma db seed",
+    "test:setup": "cross-env PRISMA_SCHEMA=prisma/schema.sqlite.prisma prisma generate && cross-env DATABASE_URL=file:./test.db PRISMA_SCHEMA=prisma/schema.sqlite.prisma prisma db push"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
   "homepage": "https://github.com/Caioohv/api_mhealth#readme",
   "description": "",
   "dependencies": {
+    "@prisma/adapter-mariadb": "^7.6.0",
     "@prisma/client": "^7.4.2",
     "bcryptjs": "^3.0.3",
     "body-parser": "^1.20.2",
@@ -33,10 +35,15 @@
     "express-rate-limit": "^8.3.1",
     "google-auth-library": "^10.6.2",
     "jsonwebtoken": "^9.0.3",
-    "morgan": "^1.10.0"
+    "mariadb": "^3.5.2",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.20.0"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
+    "jest": "^30.3.0",
     "nodemon": "^3.0.1",
-    "prisma": "^7.4.2"
+    "prisma": "^7.4.2",
+    "supertest": "^7.2.2"
   }
 }

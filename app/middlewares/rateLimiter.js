@@ -12,6 +12,7 @@ const globalLimiter = rateLimit({
   },
   standardHeaders: true, // Retorna info nos headers `RateLimit-*`
   legacyHeaders: false, // Desabilita headers `X-RateLimit-*`
+  skip: () => process.env.NODE_ENV === 'test',
 });
 
 module.exports = globalLimiter;
