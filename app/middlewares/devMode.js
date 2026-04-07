@@ -5,3 +5,5 @@ const devMode = (req, res, next) => {
     res.status(403).json({ message: 'Forbidden' })
   }
 }
+
+module.exports = devMode

@@ -61,27 +61,27 @@
 ## 4. Medicações
 
 ### 4.1 CRUD de Medicamentos
-- [ ] Endpoint `POST /networks/:id/medications` — Cadastrar medicamento
-- [ ] Endpoint `GET /networks/:id/medications` — Listar medicamentos da rede
-- [ ] Endpoint `GET /medications/:id` — Detalhes de um medicamento (com schedules)
-- [ ] Endpoint `PATCH /medications/:id/toggle-buy` — Alternar o status "Precisa Comprar"
-- [ ] Endpoint `GET /networks/:id/medications/to-buy` — Listar apenas medicamentos que precisam ser comprados
-- [ ] Endpoint `DELETE /medications/:id` — Remover medicamento
+- [x] Endpoint `POST /networks/:id/medications` — Cadastrar medicamento
+- [x] Endpoint `GET /networks/:id/medications` — Listar medicamentos da rede
+- [x] Endpoint `GET /medications/:id` — Detalhes de um medicamento (com schedules)
+- [x] Endpoint `PATCH /medications/:id/toggle-buy` — Alternar o status "Precisa Comprar"
+- [x] Endpoint `GET /networks/:id/medications/to-buy` — Listar apenas medicamentos que precisam ser comprados
+- [x] Endpoint `DELETE /medications/:id` — Remover medicamento
 
 ### 4.2 Agendamentos (Schedules)
-- [ ] Endpoint `POST /medications/:id/schedules` — Criar agendamento (intervalHours, intervalDays, specificTimes, startDate, endDate)
-- [ ] Endpoint `PATCH /schedules/:id` — Editar agendamento
-- [ ] Endpoint `DELETE /schedules/:id` — Remover agendamento
-- [ ] Lógica de cálculo de próximos horários com base nos intervalos
+- [x] Endpoint `POST /medications/:id/schedules` — Criar agendamento (intervalHours, intervalDays, specificTimes, startDate, endDate)
+- [x] Endpoint `PATCH /schedules/:id` — Editar agendamento
+- [x] Endpoint `DELETE /schedules/:id` — Remover agendamento
+- [x] Lógica de cálculo de próximos horários com base nos intervalos
 
 ### 4.3 Registro de Ingestão (Intakes)
-- [ ] Endpoint `POST /medications/:id/intakes` — Registrar tomada (TAKEN, MISSED, LATE)
-- [ ] Endpoint `GET /medications/:id/intakes` — Histórico de ingestão
-- [ ] Endpoint `GET /medications/:id/pending` — Filtrar horários pendentes de confirmação (atrasos sem registro)
+- [x] Endpoint `POST /medications/:id/intakes` — Registrar tomada (TAKEN, MISSED, LATE)
+- [x] Endpoint `GET /medications/:id/intakes` — Histórico de ingestão
+- [x] Endpoint `GET /medications/:id/pending` — Filtrar horários pendentes de confirmação (atrasos sem registro)
 
 ### 4.4 Alertas e Monitoramento
-- [ ] Lógica de alerta de medicação atrasada (comparar horário atual × schedule)
-- [ ] Alerta de "Precisa Comprar" (baseado no booleano do medicamento)
+- [x] Lógica de alerta de medicação atrasada (comparar horário atual × schedule)
+- [x] Alerta de "Precisa Comprar" (baseado no booleano do medicamento)
 
 ---
 

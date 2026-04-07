@@ -1,3 +1,4 @@
+require('./app/utils/polyfill')
 require('dotenv').config()
 const express = require('express')
 const app = express()

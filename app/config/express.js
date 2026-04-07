@@ -8,10 +8,13 @@ const authRoutes = require('../routes/auth')
 const userRoutes = require('../routes/users')
 const networkRoutes = require('../routes/networks')
 const invitationRoutes = require('../routes/invitations')
+const medicationRoutes = require('../routes/medications')
+const devRoutes = require('../routes/dev')
 
 const limiter = require('../middlewares/rateLimiter')
 const errorMiddleware = require('../middlewares/errorMiddleware')
 const authMiddleware = require('../middlewares/authMiddleware')
+const devMode = require('../middlewares/devMode')
 
 morgan.token('statusColor', (req, res, args) => {
   var status = (typeof res.headersSent !== 'boolean' ? Boolean(res.header) : res.headersSent)
@@ -42,19 +45,24 @@ module.exports = (app) => {
   // Rate limiting global
   app.use(limiter)
 
-  // Auth routes (public)
+  // -- PUBLIC ROUTES --
   authRoutes(app)
   invitationRoutes(app)
+  publicRoutes(app)
 
-  // Private routes (protected by authMiddleware)
+  // -- DEV ROUTES --
+  // We apply devMode middleware ONLY to dev routes and ensure they are before authMiddleware
+  app.use('/api/dev', devMode)
+  devRoutes(app)
+
+  // -- PRIVATE ROUTES (Protected by authMiddleware) --
   app.use('/api', authMiddleware)
   userRoutes(app)
   networkRoutes(app)
+  medicationRoutes(app)
   privateRoutes(app)
 
-  publicRoutes(app)
-
-  // Middleware global de erro (deve ser o último)
+  // Middleware global de erro
   app.use(errorMiddleware)
   
   console.log('Server ok')
