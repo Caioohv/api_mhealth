@@ -3,6 +3,7 @@ const scheduleController = require('../controllers/scheduleController');
 const intakeController = require('../controllers/intakeController'); // Will create this next
 const checkPermission = require('../middlewares/checkPermission');
 const validate = require('../middlewares/validate');
+const canRecordIntake = require('../middlewares/canRecordIntake');
 const { 
   medicationSchema, 
   toggleBuySchema, 
@@ -42,7 +43,7 @@ module.exports = (app) => {
   app.delete('/api/schedules/:id', scheduleController.remove);
 
   // Intakes
-  app.post('/api/medications/:id/intakes', validate(intakeSchema), intakeController.create);
+  app.post('/api/medications/:id/intakes', canRecordIntake, validate(intakeSchema), intakeController.create);
   app.get('/api/medications/:id/intakes', intakeController.history);
 
   // Alertas e Monitoramento

@@ -156,6 +156,13 @@ class InvitationService {
     })
   }
 
+  async findAllByUserEmail(email) {
+    return prisma.invitation.findMany({
+      where: { invitedEmail: email, status: 'PENDING' },
+      select: INVITATION_SELECT,
+    })
+  }
+
   async _findPendingByToken(token) {
     const invitation = await prisma.invitation.findUnique({
       where: { token },

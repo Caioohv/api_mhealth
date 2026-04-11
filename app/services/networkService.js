@@ -63,6 +63,10 @@ class NetworkService {
       select: {
         role: true,
         joinedAt: true,
+        medicationAccess: true,
+        consultationAccess: true,
+        networkAccess: true,
+        recordsAccess: true,
         network: {
           select: {
             ...NETWORK_SELECT,
@@ -72,8 +76,9 @@ class NetworkService {
       },
     })
 
-    return memberships.map(({ role, joinedAt, network }) => ({
+    return memberships.map(({ role, joinedAt, network, ...permissions }) => ({
       ...network,
+      ...permissions,
       memberCount: network._count.members,
       _count: undefined,
       myRole: role,

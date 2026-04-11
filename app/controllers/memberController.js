@@ -32,6 +32,15 @@ class MemberController {
       next(error)
     }
   }
+
+  async getMyPermissions(req, res, next) {
+    try {
+      // req.membership is populated by the checkPermission middleware
+      res.json(req.membership)
+    } catch (error) {
+      next(error)
+    }
+  }
 }
 
 module.exports = new MemberController()

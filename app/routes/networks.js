@@ -10,6 +10,7 @@ module.exports = (app) => {
   app.post('/api/networks', validate(networkSchema), networkController.create)
   app.get('/api/networks', networkController.findAll)
   app.get('/api/networks/:id', networkController.findOne)
+  app.get('/api/networks/:id/permissions', checkPermission(), memberController.getMyPermissions)
   app.patch('/api/networks/:id', validate(networkSchema), networkController.update)
   app.delete('/api/networks/:id', networkController.remove)
 

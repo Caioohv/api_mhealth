@@ -9,6 +9,8 @@ const userRoutes = require('../routes/users')
 const networkRoutes = require('../routes/networks')
 const invitationRoutes = require('../routes/invitations')
 const medicationRoutes = require('../routes/medications')
+const consultationRoutes = require('../routes/consultations')
+const occurrenceRoutes = require('../routes/occurrences')
 const devRoutes = require('../routes/dev')
 
 const limiter = require('../middlewares/rateLimiter')
@@ -47,7 +49,6 @@ module.exports = (app) => {
 
   // -- PUBLIC ROUTES --
   authRoutes(app)
-  invitationRoutes(app)
   publicRoutes(app)
 
   // -- DEV ROUTES --
@@ -60,6 +61,9 @@ module.exports = (app) => {
   userRoutes(app)
   networkRoutes(app)
   medicationRoutes(app)
+  consultationRoutes(app)
+  occurrenceRoutes(app)
+  invitationRoutes(app)
   privateRoutes(app)
 
   // Middleware global de erro

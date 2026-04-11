@@ -1,6 +1,16 @@
 const invitationService = require('../services/invitationService')
 
 class InvitationController {
+  async findAll(req, res, next) {
+    try {
+      const { email } = req.user
+      const invitations = await invitationService.findAllByUserEmail(email)
+      res.status(200).json(invitations)
+    } catch (error) {
+      next(error)
+    }
+  }
+
   async create(req, res, next) {
     try {
       const invitation = await invitationService.create(req.params.id, req.user.id, req.body)

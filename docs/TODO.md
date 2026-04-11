@@ -87,22 +87,22 @@
 
 ## 5. Consultas e Procedimentos
 
-- [ ] Endpoint `POST /networks/:id/consultations` — Agendar consulta ou procedimento (type: CONSULTA | PROCEDIMENTO)
-- [ ] Endpoint `GET /networks/:id/consultations` — Listar consultas/procedimentos (com filtro por type)
-- [ ] Endpoint `GET /consultations/:id` — Detalhes
-- [ ] Endpoint `PATCH /consultations/:id` — Editar consulta
-- [ ] Endpoint `DELETE /consultations/:id` — Cancelar consulta
-- [ ] Lógica de lembrete de consulta próxima
+- [x] Endpoint `POST /networks/:id/consultations` — Agendar consulta ou procedimento (type: CONSULTA | PROCEDIMENTO)
+- [x] Endpoint `GET /networks/:id/consultations` — Listar consultas/procedimentos (com filtro por type)
+- [x] Endpoint `GET /consultations/:id` — Detalhes
+- [x] Endpoint `PATCH /consultations/:id` — Editar consulta
+- [x] Endpoint `DELETE /consultations/:id` — Cancelar consulta
+- [x] Lógica de lembrete de consulta próxima
 
 ---
 
 ## 6. Ocorrências / Diário
 
-- [ ] Endpoint `POST /networks/:id/occurrences` — Registrar ocorrência (QUEDA, MAL_ESTAR, OBSERVACAO)
-- [ ] Endpoint `GET /networks/:id/occurrences` — Listar ocorrências (com filtros por tipo e período)
-- [ ] Endpoint `GET /occurrences/:id` — Detalhes
-- [ ] Endpoint `PATCH /occurrences/:id` — Editar ocorrência
-- [ ] Endpoint `DELETE /occurrences/:id` — Remover ocorrência
+- [x] Endpoint `POST /networks/:id/occurrences` — Registrar ocorrência (QUEDA, MAL_ESTAR, OBSERVACAO)
+- [x] Endpoint `GET /networks/:id/occurrences` — Listar ocorrências (com filtros por tipo e período)
+- [x] Endpoint `GET /occurrences/:id` — Detalhes
+- [x] Endpoint `PATCH /occurrences/:id` — Editar ocorrência
+- [x] Endpoint `DELETE /occurrences/:id` — Remover ocorrência
 
 ---
 

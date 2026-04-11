@@ -32,16 +32,7 @@ module.exports = (app) => {
     }
   })
 
-  // Login with fixed password
-  app.post('/api/dev/login', async (req, res, next) => {
-    try {
-      const { email } = req.body
-      const result = await authService.login(email, 'senha1')
-      res.json(result)
-    } catch (error) {
-      next(error)
-    }
-  })
+
 
   // Get user networks, members and permissions
   app.get('/api/dev/networks/:userId', async (req, res, next) => {
@@ -64,70 +55,5 @@ module.exports = (app) => {
     }
   })
 
-  // Create network
-  app.post('/api/dev/networks', async (req, res, next) => {
-    try {
-      const { userId, name, description } = req.body
-      const network = await networkService.create(userId, { name, description })
-      res.status(201).json(network)
-    } catch (error) {
-      next(error)
-    }
-  })
 
-  // Invite someone
-  app.post('/api/dev/invite', async (req, res, next) => {
-    try {
-      const { 
-        networkId, 
-        inviterId, 
-        invitedEmail, 
-        proposedRole,
-        medicationAccess,
-        consultationAccess,
-        networkAccess,
-        recordsAccess 
-      } = req.body
-
-      const invitation = await invitationService.create(networkId, inviterId, {
-        invitedEmail,
-        proposedRole: proposedRole || 'RESPONSAVEL',
-        medicationAccess: medicationAccess || 'VIEW',
-        consultationAccess: consultationAccess || 'VIEW',
-        networkAccess: networkAccess || 'VIEW',
-        recordsAccess: recordsAccess || 'VIEW'
-      })
-      res.status(201).json(invitation)
-    } catch (error) {
-      next(error)
-    }
-  })
-
-  // Get invites for email
-  app.get('/api/dev/invites/:email', async (req, res, next) => {
-    try {
-      const { email } = req.params
-      const invites = await prisma.invitation.findMany({
-        where: { invitedEmail: email, status: 'PENDING' },
-        include: {
-          network: { select: { id: true, name: true } },
-          inviter: { select: { id: true, name: true } }
-        }
-      })
-      res.json(invites)
-    } catch (error) {
-      next(error)
-    }
-  })
-
-  // Accept invite (shortcut for testing)
-  app.post('/api/dev/accept-invite', async (req, res, next) => {
-    try {
-      const { token, userId } = req.body
-      const member = await invitationService.accept(token, userId)
-      res.json(member)
-    } catch (error) {
-      next(error)
-    }
-  })
 }
