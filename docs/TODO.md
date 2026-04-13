@@ -109,58 +109,58 @@
 ## 7. Metas e Hábitos
 
 ### 7.1 CRUD de Hábitos
-- [ ] Endpoint `POST /networks/:id/habits` — Criar hábito (nome, frequency, goal, unit)
-- [ ] Endpoint `GET /networks/:id/habits` — Listar hábitos da rede
-- [ ] Endpoint `GET /habits/:id` — Detalhes de um hábito (com records do dia/semana)
-- [ ] Endpoint `PATCH /habits/:id` — Editar hábito
-- [ ] Endpoint `DELETE /habits/:id` — Remover hábito
+- [x] Endpoint `POST /networks/:id/habits` — Criar hábito (nome, frequency, goal, unit)
+- [x] Endpoint `GET /networks/:id/habits` — Listar hábitos da rede
+- [x] Endpoint `GET /habits/:id` — Detalhes de um hábito (com records do dia/semana)
+- [x] Endpoint `PATCH /habits/:id` — Editar hábito
+- [x] Endpoint `DELETE /habits/:id` — Remover hábito
 
 ### 7.2 Registro de Hábitos
-- [ ] Endpoint `POST /habits/:id/records` — Registrar conclusão (value, notes)
-- [ ] Endpoint `GET /habits/:id/records` — Histórico de registros
-- [ ] Cálculo de progresso (value acumulado vs goal por período)
+- [x] Endpoint `POST /habits/:id/records` — Registrar conclusão (value, notes)
+- [x] Endpoint `GET /habits/:id/records` — Histórico de registros
+- [x] Cálculo de progresso (value acumulado vs goal por período)
 
 ---
 
 ## 8. Emergência / SOS
 
-- [ ] Endpoint `POST /networks/:id/emergency` — Disparar alerta de emergência
-- [ ] Lógica de notificação: enviar para todos membros com `alertLevel = ALL` ou `EMERGENCY_ONLY`
-- [ ] Endpoint `GET /networks/:id/emergency` — Histórico de alertas
-- [ ] Endpoint `PATCH /emergency/:id/resolve` — Resolver alerta (marca `resolvedAt`)
-- [ ] Endpoint `PATCH /emergency/:id/cancel` — Cancelar alerta falso
+- [x] Endpoint `POST /networks/:id/emergency` — Disparar alerta de emergência
+- [x] Lógica de notificação: enviar para todos membros com `alertLevel = ALL` ou `EMERGENCY_ONLY`
+- [x] Endpoint `GET /networks/:id/emergency` — Histórico de alertas
+- [x] Endpoint `PATCH /emergency/:id/resolve` — Resolver alerta (marca `resolvedAt`)
+- [x] Endpoint `PATCH /emergency/:id/cancel` — Cancelar alerta falso
 
 ---
 
 ## 9. Auditoria e Timeline
 
-- [ ] Endpoint `GET /networks/:id/timeline` — Timeline unificada de ações da rede
-  - [ ] Agregar dados de: `MedicationIntake`, `Occurrence`, `HabitRecord`, `EmergencyAlert`
-  - [ ] Ordenar por data, com paginação
-  - [ ] Exibir "quem fez o quê" (registrar → User)
+- [x] Endpoint `GET /networks/:id/timeline` — Timeline unificada de ações da rede
+  - [x] Agregar dados de: `MedicationIntake`, `Occurrence`, `HabitRecord`, `EmergencyAlert`
+  - [x] Ordenar por data, com paginação
+  - [x] Exibir "quem fez o quê" (registrar → User)
 
 ---
 
 ## 10. Dashboard e Relatórios
 
 ### 10.1 Dashboard do Idoso
-- [ ] Endpoint `GET /networks/:id/dashboard/patient` — "O que fazer agora?"
-  - [ ] Próximos medicamentos a tomar
-  - [ ] Hábitos pendentes do dia
-  - [ ] Consultas próximas
+- [x] Endpoint `GET /networks/:id/dashboard/patient` — "O que fazer agora?"
+  - [x] Próximos medicamentos a tomar
+  - [x] Hábitos pendentes do dia
+  - [x] Consultas próximas
 
 ### 10.2 Dashboard do Responsável
-- [ ] Endpoint `GET /networks/:id/dashboard/caregiver` — Visão geral de monitoramento
-  - [ ] Taxa de adesão do dia/semana
-  - [ ] Últimas ocorrências
-  - [ ] Alertas ativos
+- [x] Endpoint `GET /networks/:id/dashboard/caregiver` — Visão geral de monitoramento
+  - [x] Taxa de adesão do dia/semana
+  - [x] Últimas ocorrências
+  - [x] Alertas ativos
 
 ### 10.3 Relatório de Adesão
-- [ ] Endpoint `GET /networks/:id/reports/adherence` — Relatório de adesão a medicamentos
-  - [ ] Percentual de medicamentos tomados no prazo
-  - [ ] Lista de medicamentos com menor adesão
-- [ ] Endpoint `GET /networks/:id/reports/habits` — Relatório de hábitos
-  - [ ] Progresso semanal/mensal por hábito
+- [x] Endpoint `GET /networks/:id/reports/adherence` — Relatório de adesão a medicamentos
+  - [x] Percentual de medicamentos tomados no prazo
+  - [x] Lista de medicamentos com menor adesão
+- [x] Endpoint `GET /networks/:id/reports/habits` — Relatório de hábitos
+  - [x] Progresso semanal/mensal por hábito
 
 ---
 

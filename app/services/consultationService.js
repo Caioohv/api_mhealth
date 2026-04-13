@@ -11,9 +11,15 @@ class ConsultationService {
     });
   }
 
-  async findAllByNetwork(networkId, type) {
+  async findAllByNetwork(networkId, { type, startDate, endDate } = {}) {
     const where = { networkId };
     if (type) where.type = type;
+    
+    if (startDate || endDate) {
+      where.date = {};
+      if (startDate) where.date.gte = new Date(startDate);
+      if (endDate) where.date.lte = new Date(endDate);
+    }
 
     return await prisma.consultation.findMany({
       where,

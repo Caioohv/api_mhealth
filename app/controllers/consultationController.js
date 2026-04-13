@@ -14,8 +14,12 @@ class ConsultationController {
   async listByNetwork(req, res, next) {
     try {
       const { id: networkId } = req.params;
-      const { type } = req.query;
-      const consultations = await consultationService.findAllByNetwork(networkId, type);
+      const { type, startDate, endDate } = req.query;
+      const consultations = await consultationService.findAllByNetwork(networkId, { 
+        type, 
+        startDate, 
+        endDate 
+      });
       res.json(consultations);
     } catch (error) {
       next(error);
