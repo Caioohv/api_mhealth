@@ -1,0 +1,18 @@
+services:
+  api_mhealth:
+    build: .
+    container_name: api_mhealth
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: mysql://viier:viier@mhealth_mysql:3306/mhealth
+    networks:
+      - caddy_net
+    depends_on:
+      mhealth_mysql:
+        condition: service_healthy
+
+networks:
+  caddy_net:
+    external: true
