@@ -9,9 +9,6 @@ services:
       DATABASE_URL: mysql://viier:viier@mhealth_mysql:3306/mhealth
     networks:
       - caddy_net
-    depends_on:
-      mhealth_mysql:
-        condition: service_healthy
 
 networks:
   caddy_net:
