@@ -13,6 +13,7 @@ services:
       DATABASE_PASSWORD: viier
       DATABASE_NAME: mhealth
       DEVMODE: "true"
+      JWT_SECRET: change_me_to_a_strong_secret
     networks:
       - caddy_net
 
