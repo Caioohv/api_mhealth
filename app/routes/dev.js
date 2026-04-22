@@ -34,6 +34,12 @@ module.exports = (app) => {
 
 
 
+  // Print current process.env to terminal
+  app.get('/api/dev/env', (req, res) => {
+    console.log('[ENV]', process.env)
+    res.json({ ok: true })
+  })
+
   // Get user networks, members and permissions
   app.get('/api/dev/networks/:userId', async (req, res, next) => {
     try {
