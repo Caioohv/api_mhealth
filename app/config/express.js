@@ -40,6 +40,7 @@ module.exports = (app) => {
   console.log('Booting Server...')
 
   app.set('view cache', false)
+  app.set('trust proxy', 1)
   app.use(bodyParser.json({limit: '20mb'}))
   app.use(bodyParser.urlencoded({extended: true}))
 
