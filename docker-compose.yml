@@ -12,6 +12,7 @@ services:
       DATABASE_USER: viier
       DATABASE_PASSWORD: viier
       DATABASE_NAME: mhealth
+      DEVMODE: "true"
     networks:
       - caddy_net
 
