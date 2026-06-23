@@ -2,6 +2,7 @@ const habitController = require('../controllers/habitController');
 const checkPermission = require('../middlewares/checkPermission');
 const validate = require('../middlewares/validate');
 const { habitSchema, habitRecordSchema } = require('../validators/habit');
+const prisma = require('../config/prisma');
 
 module.exports = (app) => {
   // Routes nested under networks (for creation and listing)
@@ -14,7 +15,7 @@ module.exports = (app) => {
 
   app.get(
     '/api/networks/:id/habits',
-    checkPermission('recordsAccess', 'VIEW'),
+    checkPermission('recordsAccess', 'VIEW', { allowRoles: ['ASSISTIDO'] }),
     habitController.listByNetwork
   );
 
@@ -26,6 +27,16 @@ module.exports = (app) => {
   // Records
   app.post(
     '/api/habits/:id/records',
+    checkPermission('recordsAccess', 'EDIT', {
+      allowRoles: ['ASSISTIDO'],
+      resolveNetworkId: async (req) => {
+        const habit = await prisma.habit.findUnique({
+          where: { id: req.params.id },
+          select: { networkId: true },
+        });
+        return habit?.networkId ?? null;
+      },
+    }),
     validate(habitRecordSchema),
     habitController.addRecord
   );

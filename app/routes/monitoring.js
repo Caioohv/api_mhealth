@@ -13,8 +13,8 @@ module.exports = (app) => {
 
   // Dashboards
   app.get(
-    '/api/networks/:id/dashboard/patient', 
-    checkPermission('recordsAccess', 'VIEW'), 
+    '/api/networks/:id/dashboard/patient',
+    checkPermission('recordsAccess', 'VIEW', { allowRoles: ['ASSISTIDO'] }),
     dashboardController.getPatientDashboard
   );
   
@@ -25,8 +25,8 @@ module.exports = (app) => {
   );
 
   app.get(
-    '/api/networks/:id/agenda', 
-    checkPermission('recordsAccess', 'VIEW'), 
+    '/api/networks/:id/agenda',
+    checkPermission('recordsAccess', 'VIEW', { allowRoles: ['ASSISTIDO'] }),
     dashboardController.getAgenda
   );
 

@@ -14,6 +14,9 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+  // Disable FK checks so tables can be deleted in any order
+  await prisma.$executeRawUnsafe('PRAGMA foreign_keys = OFF;');
+
   // Clean database between tests to ensure isolation
   const tablenames = await prisma.$queryRaw`
     SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE '_prisma_migrations';
@@ -28,6 +31,9 @@ beforeEach(async () => {
       }
     }
   }
+
+  // Re-enable FK checks for the test itself
+  await prisma.$executeRawUnsafe('PRAGMA foreign_keys = ON;');
 });
 
 afterAll(async () => {

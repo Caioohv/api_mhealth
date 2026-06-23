@@ -21,14 +21,14 @@ module.exports = (app) => {
   );
 
   app.get(
-    '/api/networks/:id/medications', 
-    checkPermission('medicationAccess', 'VIEW'), 
+    '/api/networks/:id/medications',
+    checkPermission('medicationAccess', 'VIEW', { allowRoles: ['ASSISTIDO'] }),
     medicationController.listByNetwork
   );
 
   app.get(
-    '/api/networks/:id/medications/to-buy', 
-    checkPermission('medicationAccess', 'VIEW'), 
+    '/api/networks/:id/medications/to-buy',
+    checkPermission('medicationAccess', 'VIEW', { allowRoles: ['ASSISTIDO'] }),
     medicationController.listToBuy
   );
 
@@ -48,8 +48,8 @@ module.exports = (app) => {
 
   // Alertas e Monitoramento
   app.get(
-    '/api/networks/:id/medications/alerts', 
-    checkPermission('medicationAccess', 'VIEW'), 
+    '/api/networks/:id/medications/alerts',
+    checkPermission('medicationAccess', 'VIEW', { allowRoles: ['ASSISTIDO'] }),
     medicationController.getAlerts
   );
 };

@@ -11,6 +11,15 @@ const createInvitationSchema = z.object({
 }).refine(data => data.invitedEmail || data.invitedPhone, {
   message: 'É necessário fornecer pelo menos um email ou telefone para o convite',
   path: ['invitedEmail'],
+}).transform((data) => {
+  if (data.proposedRole !== 'ASSISTIDO') return data;
+  return {
+    ...data,
+    medicationAccess:   data.medicationAccess   !== 'NONE' ? data.medicationAccess   : 'VIEW',
+    consultationAccess: data.consultationAccess !== 'NONE' ? data.consultationAccess : 'VIEW',
+    networkAccess:      data.networkAccess,
+    recordsAccess:      data.recordsAccess      !== 'NONE' ? data.recordsAccess      : 'VIEW',
+  };
 });
 
 module.exports = {

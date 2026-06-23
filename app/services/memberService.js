@@ -45,6 +45,16 @@ class MemberService {
       throw error
     }
 
+    if (
+      target.network.creatorId === target.userId &&
+      data.networkAccess !== undefined &&
+      data.networkAccess !== 'EDIT'
+    ) {
+      const error = new Error("Cannot downgrade the network creator's networkAccess permission")
+      error.statusCode = 400
+      throw error
+    }
+
     const updateData = {}
 
     if (data.role !== undefined) {

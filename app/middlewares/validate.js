@@ -17,7 +17,7 @@ const validate = (schema, property = 'body') => {
         validationError.statusCode = 400;
         
         // Formata os erros do Zod para uma estrutura mais amigável
-        validationError.details = error.errors.map(err => ({
+        validationError.details = error.issues.map(err => ({
           path: err.path.join('.'),
           message: err.message,
         }));

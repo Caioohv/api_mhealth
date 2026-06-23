@@ -20,6 +20,7 @@ module.exports = (app) => {
   app.patch('/api/networks/:id/members/:memberId', checkPermission('networkAccess', 'EDIT'), memberController.update)
   app.delete('/api/networks/:id/members/:memberId', checkPermission('networkAccess', 'EDIT'), memberController.remove)
 
+  app.get('/api/networks/:id/invitations', checkPermission('networkAccess', 'VIEW'), invitationController.findAllByNetwork)
   app.post('/api/networks/:id/invitations', checkPermission('networkAccess', 'EDIT'), validate(createInvitationSchema), invitationController.create)
   app.delete('/api/invitations/:id', invitationController.cancel)
 

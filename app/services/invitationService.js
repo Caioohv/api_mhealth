@@ -181,6 +181,14 @@ class InvitationService {
     })
   }
 
+  async findAllByNetwork(networkId) {
+    return prisma.invitation.findMany({
+      where: { networkId },
+      orderBy: { createdAt: 'desc' },
+      select: INVITATION_SELECT,
+    })
+  }
+
   async _findPendingByToken(token) {
     const invitation = await prisma.invitation.findUnique({
       where: { token },
