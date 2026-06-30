@@ -17,7 +17,7 @@ const createInvitationSchema = z.object({
     ...data,
     medicationAccess:   data.medicationAccess   !== 'NONE' ? data.medicationAccess   : 'VIEW',
     consultationAccess: data.consultationAccess !== 'NONE' ? data.consultationAccess : 'VIEW',
-    networkAccess:      data.networkAccess,
+    networkAccess:      data.networkAccess      !== 'NONE' ? data.networkAccess      : 'VIEW',
     recordsAccess:      data.recordsAccess      !== 'NONE' ? data.recordsAccess      : 'VIEW',
   };
 });
