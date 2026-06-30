@@ -33,7 +33,7 @@ class NetworkService {
       throw error
     }
 
-    return prisma.supportNetwork.create({
+    const result = await prisma.supportNetwork.create({
       data: {
         name,
         description,
@@ -55,6 +55,11 @@ class NetworkService {
         members: { select: MEMBER_SELECT },
       },
     })
+
+    const { members, ...network } = result
+    const myMembership = members.find((member) => member.user.id === userId)
+
+    return this._formatMembership({ ...network, memberCount: members.length }, myMembership)
   }
 
   async findAllByUser(userId) {
@@ -76,14 +81,29 @@ class NetworkService {
       },
     })
 
-    return memberships.map(({ role, joinedAt, network, ...permissions }) => ({
+    return memberships.map(({ network, ...membership }) =>
+      this._formatMembership(
+        { ...network, memberCount: network._count.members, _count: undefined },
+        membership
+      )
+    )
+  }
+
+  // Flattens a membership's role and per-area access fields onto the network object,
+  // matching the shape every network endpoint returns to the calling user.
+  _formatMembership(network, membership) {
+    const { role, joinedAt, medicationAccess, consultationAccess, networkAccess, recordsAccess } =
+      membership
+
+    return {
       ...network,
-      ...permissions,
-      memberCount: network._count.members,
-      _count: undefined,
       myRole: role,
       joinedAt,
-    }))
+      medicationAccess,
+      consultationAccess,
+      networkAccess,
+      recordsAccess,
+    }
   }
 
   async findById(networkId, userId) {
