@@ -252,6 +252,37 @@ describe('Invitation System', () => {
       expect(assistidoMember.medicationAccess).toBe('VIEW')
     })
 
+    it('should default networkAccess to VIEW for a default assistido invite and allow read-only access to members', async () => {
+      const invRes = await request(app)
+        .post(`/api/networks/${networkId}/invitations`)
+        .set('Authorization', `Bearer ${responsavelToken}`)
+        .send({
+          invitedEmail: ASSISTIDO.email,
+          proposedRole: 'ASSISTIDO',
+        })
+
+      await request(app)
+        .post(`/api/invitations/${invRes.body.token}/accept`)
+        .set('Authorization', `Bearer ${assistidoToken}`)
+
+      const membersRes = await request(app)
+        .get(`/api/networks/${networkId}/members`)
+        .set('Authorization', `Bearer ${assistidoToken}`)
+
+      expect(membersRes.statusCode).toBe(200)
+      const assistidoMember = membersRes.body.find((m) => m.user.id === assistidoId)
+      expect(assistidoMember).toBeDefined()
+      expect(assistidoMember.networkAccess).toBe('VIEW')
+
+      // Still read-only: cannot invite new members with default VIEW access
+      const inviteAttempt = await request(app)
+        .post(`/api/networks/${networkId}/invitations`)
+        .set('Authorization', `Bearer ${assistidoToken}`)
+        .send({ invitedEmail: 'novo2@example.com', proposedRole: 'ASSISTIDO' })
+
+      expect(inviteAttempt.statusCode).toBe(403)
+    })
+
     it('should return 409 if user is already a member', async () => {
       await request(app)
         .post(`/api/invitations/${inviteToken}/accept`)
