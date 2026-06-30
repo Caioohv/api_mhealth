@@ -28,7 +28,7 @@ const ANOTHER_RESPONSAVEL = {
 
 async function register(user) {
   const res = await request(app).post('/auth/register').send(user)
-  return { token: res.body.token, id: res.body.user.id }
+  return { token: res.body.accessToken, id: res.body.user.id }
 }
 
 async function createNetwork(token, data = { name: 'Rede Teste' }) {
