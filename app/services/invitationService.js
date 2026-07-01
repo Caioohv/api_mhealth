@@ -21,6 +21,23 @@ const VALID_ROLES = ['RESPONSAVEL', 'ASSISTIDO']
 const VALID_PERMISSION_LEVELS = ['NONE', 'VIEW', 'EDIT']
 const INVITATION_EXPIRY_DAYS = 7
 
+// The person being cared for needs to see their own network's data by default,
+// otherwise they land in an app with every menu hidden and every request rejected.
+const DEFAULT_PERMISSIONS_BY_ROLE = {
+  ASSISTIDO: {
+    medicationAccess: 'EDIT',
+    consultationAccess: 'VIEW',
+    networkAccess: 'VIEW',
+    recordsAccess: 'VIEW',
+  },
+  RESPONSAVEL: {
+    medicationAccess: 'EDIT',
+    consultationAccess: 'EDIT',
+    networkAccess: 'EDIT',
+    recordsAccess: 'EDIT',
+  },
+}
+
 class InvitationService {
   async create(networkId, inviterId, data) {
     const { proposedRole, invitedEmail, invitedPhone } = data
@@ -32,7 +49,8 @@ class InvitationService {
     }
 
     const permFields = ['medicationAccess', 'consultationAccess', 'networkAccess', 'recordsAccess']
-    const permData = {}
+    const defaults = DEFAULT_PERMISSIONS_BY_ROLE[proposedRole]
+    const permData = { ...defaults }
     for (const field of permFields) {
       if (data[field] !== undefined) {
         if (!VALID_PERMISSION_LEVELS.includes(data[field])) {
