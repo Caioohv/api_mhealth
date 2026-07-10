@@ -73,6 +73,14 @@ module.exports = (app) => {
   invitationRoutes(app)
   privateRoutes(app)
 
+  // -- CATCH-ALL 404 (JSON, never HTML) --
+  // Ensures any unmatched route (typo, wrong verb, not-yet-deployed endpoint)
+  // returns a JSON body instead of Express's default HTML error page, which
+  // would otherwise crash JSON.parse on the client.
+  app.use((req, res) => {
+    res.status(404).json({ status: 'error', message: 'Rota não encontrada.' })
+  })
+
   // Middleware global de erro
   app.use(errorMiddleware)
   
