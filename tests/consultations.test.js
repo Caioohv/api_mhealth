@@ -245,6 +245,77 @@ describe('Consultations', () => {
     })
   })
 
+  // ─── PATCH /api/consultations/:id/attendance ───────────────────────────────
+
+  describe('PATCH /api/consultations/:id/attendance', () => {
+    it('should mark a consultation as ATTENDED', async () => {
+      const created = await createConsultation(responsavelToken, networkId)
+      const id = created.body.id
+
+      const res = await request(app)
+        .patch(`/api/consultations/${id}/attendance`)
+        .set('Authorization', `Bearer ${responsavelToken}`)
+        .send({ attendanceStatus: 'ATTENDED' })
+
+      expect(res.statusCode).toBe(200)
+      expect(res.body.attendanceStatus).toBe('ATTENDED')
+    })
+
+    it('should mark a consultation as MISSED', async () => {
+      const created = await createConsultation(responsavelToken, networkId)
+      const id = created.body.id
+
+      const res = await request(app)
+        .patch(`/api/consultations/${id}/attendance`)
+        .set('Authorization', `Bearer ${responsavelToken}`)
+        .send({ attendanceStatus: 'MISSED' })
+
+      expect(res.statusCode).toBe(200)
+      expect(res.body.attendanceStatus).toBe('MISSED')
+    })
+
+    it('should reset attendance back to PENDING', async () => {
+      const created = await createConsultation(responsavelToken, networkId)
+      const id = created.body.id
+
+      await request(app)
+        .patch(`/api/consultations/${id}/attendance`)
+        .set('Authorization', `Bearer ${responsavelToken}`)
+        .send({ attendanceStatus: 'ATTENDED' })
+
+      const res = await request(app)
+        .patch(`/api/consultations/${id}/attendance`)
+        .set('Authorization', `Bearer ${responsavelToken}`)
+        .send({ attendanceStatus: 'PENDING' })
+
+      expect(res.statusCode).toBe(200)
+      expect(res.body.attendanceStatus).toBe('PENDING')
+    })
+
+    it('should return 400 for an invalid attendanceStatus value', async () => {
+      const created = await createConsultation(responsavelToken, networkId)
+      const id = created.body.id
+
+      const res = await request(app)
+        .patch(`/api/consultations/${id}/attendance`)
+        .set('Authorization', `Bearer ${responsavelToken}`)
+        .send({ attendanceStatus: 'NOT_A_STATUS' })
+
+      expect(res.statusCode).toBe(400)
+    })
+
+    it('should return 401 without token (auth gap closed)', async () => {
+      const created = await createConsultation(responsavelToken, networkId)
+      const id = created.body.id
+
+      const res = await request(app)
+        .patch(`/api/consultations/${id}/attendance`)
+        .send({ attendanceStatus: 'ATTENDED' })
+
+      expect(res.statusCode).toBe(401)
+    })
+  })
+
   // ─── DELETE /api/consultations/:id ────────────────────────────────────────
 
   describe('DELETE /api/consultations/:id', () => {
