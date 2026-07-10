@@ -131,6 +131,7 @@ describe('Consultations', () => {
       expect(res.statusCode).toBe(200)
       expect(Array.isArray(res.body)).toBe(true)
       expect(res.body).toHaveLength(2)
+      expect(res.body[0]).toHaveProperty('attendanceStatus', 'PENDING')
     })
 
     it('should filter by startDate and endDate', async () => {
@@ -205,6 +206,7 @@ describe('Consultations', () => {
 
       expect(res.statusCode).toBe(200)
       expect(res.body.id).toBe(id)
+      expect(res.body.attendanceStatus).toBe('PENDING')
     })
 
     it('should return 401 without token (auth gap closed)', async () => {
@@ -358,6 +360,7 @@ describe('Consultations', () => {
       expect(Array.isArray(res.body)).toBe(true)
       expect(res.body.some((c) => c.title === 'Em breve')).toBe(true)
       expect(res.body.some((c) => c.title === 'Distante')).toBe(false)
+      expect(res.body[0]).toHaveProperty('attendanceStatus')
     })
   })
 })
