@@ -43,6 +43,12 @@ enum ConsultationType {
   PROCEDIMENTO
 }
 
+enum AttendanceStatus {
+  PENDING
+  ATTENDED
+  MISSED
+}
+
 enum IntakeStatus {
   TAKEN
   MISSED
@@ -216,18 +222,19 @@ model MedicationIntake {
 // ----------------------------------------------------------------------------
 
 model Consultation {
-  id          String           @id @default(uuid())
-  networkId   String
-  type        ConsultationType @default(CONSULTA) // CONSULTA ou PROCEDIMENTO
-  title       String
-  date        DateTime
-  doctorName  String?
-  specialty   String?
-  notes       String?
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  id               String           @id @default(uuid())
+  networkId        String
+  type             ConsultationType @default(CONSULTA) // CONSULTA ou PROCEDIMENTO
+  title            String
+  date             DateTime
+  doctorName       String?
+  specialty        String?
+  notes            String?
+  attendanceStatus AttendanceStatus @default(PENDING)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 
-  network     SupportNetwork @relation(fields: [networkId], references: [id], onDelete: Cascade)
+  network          SupportNetwork @relation(fields: [networkId], references: [id], onDelete: Cascade)
 }
 
 // ----------------------------------------------------------------------------

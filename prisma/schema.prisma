@@ -128,17 +128,18 @@ model MedicationIntake {
 }
 
 model Consultation {
-  id         String           @id @default(uuid())
-  networkId  String
-  type       ConsultationType @default(CONSULTA)
-  title      String
-  date       DateTime
-  doctorName String?
-  specialty  String?
-  notes      String?          @db.Text
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
-  network    SupportNetwork   @relation(fields: [networkId], references: [id], onDelete: Cascade)
+  id               String           @id @default(uuid())
+  networkId        String
+  type             ConsultationType @default(CONSULTA)
+  title            String
+  date             DateTime
+  doctorName       String?
+  specialty        String?
+  notes            String?          @db.Text
+  attendanceStatus AttendanceStatus @default(PENDING)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  network          SupportNetwork   @relation(fields: [networkId], references: [id], onDelete: Cascade)
 
   @@index([networkId], map: "Consultation_networkId_fkey")
 }
@@ -231,6 +232,12 @@ enum PermissionLevel {
 enum ConsultationType {
   CONSULTA
   PROCEDIMENTO
+}
+
+enum AttendanceStatus {
+  PENDING
+  ATTENDED
+  MISSED
 }
 
 enum IntakeStatus {
