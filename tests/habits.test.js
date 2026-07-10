@@ -224,6 +224,122 @@ describe('Habits', () => {
     })
   })
 
+  // ─── WEEKLY habit integration (POST → GET round-trip) ──────────────────
+  // These tests exercise the full Express route/middleware/controller/service
+  // chain end-to-end via real HTTP requests (not direct service-function calls),
+  // confirming that WEEKLY completions are persisted and re-read correctly
+  // through the same BRT-anchored calculateProgress() path as DAILY habits.
+
+  describe('WEEKLY habit HTTP round-trip', () => {
+    it('reflects current: 1 after a record is posted, when re-fetched via GET', async () => {
+      const created = await createHabit(responsavelToken, networkId, {
+        name: 'Academia semanal',
+        frequency: 'WEEKLY',
+      })
+      const habitId = created.body.id
+
+      // POST the completion through the real route chain
+      const recordRes = await addRecord(responsavelToken, habitId)
+      expect(recordRes.statusCode).toBe(201)
+
+      // Re-fetch via GET /api/networks/:id/habits and assert persistence
+      const listRes = await request(app)
+        .get(`/api/networks/${networkId}/habits`)
+        .set('Authorization', `Bearer ${responsavelToken}`)
+
+      expect(listRes.statusCode).toBe(200)
+      const habit = listRes.body.find((h) => h.id === habitId)
+      expect(habit.progress.current).toBeGreaterThanOrEqual(1)
+      expect(habit.progress.goal).toBeNull()
+      expect(habit.progress.percentage).toBeNull()
+      expect(habit.progress.period).toBe('WEEKLY')
+
+      // Also verify persistence via GET /api/habits/:id (detail endpoint)
+      const detailRes = await request(app)
+        .get(`/api/habits/${habitId}`)
+        .set('Authorization', `Bearer ${responsavelToken}`)
+
+      expect(detailRes.statusCode).toBe(200)
+      expect(detailRes.body.progress.current).toBeGreaterThanOrEqual(1)
+    })
+
+    it('accumulates multiple records within the same week', async () => {
+      const created = await createHabit(responsavelToken, networkId, {
+        name: 'Corrida semanal',
+        frequency: 'WEEKLY',
+        goal: 3,
+        unit: 'sessões',
+      })
+      const habitId = created.body.id
+
+      await addRecord(responsavelToken, habitId)
+      await addRecord(responsavelToken, habitId)
+
+      const res = await request(app)
+        .get(`/api/networks/${networkId}/habits`)
+        .set('Authorization', `Bearer ${responsavelToken}`)
+
+      const habit = res.body.find((h) => h.id === habitId)
+      expect(habit.progress.current).toBe(2)
+      expect(habit.progress.goal).toBe(3)
+      expect(habit.progress.percentage).toBe(67)
+    })
+  })
+
+  // ─── WEEKLY habit BRT week boundary ─────────────────────────────────────
+  // Mirrors the DAILY day-boundary tests for the weekly period, ensuring the
+  // same BRT-timezone anchoring in calculateProgress() works end-to-end via
+  // real HTTP requests for WEEKLY habits as well.
+
+  describe('WEEKLY habit week boundary anchored to America/Sao_Paulo', () => {
+    const ALL_TIMERS_EXCEPT_DATE = [
+      'hrtime',
+      'nextTick',
+      'performance',
+      'queueMicrotask',
+      'requestAnimationFrame',
+      'cancelAnimationFrame',
+      'requestIdleCallback',
+      'cancelIdleCallback',
+      'setImmediate',
+      'clearImmediate',
+      'setInterval',
+      'clearInterval',
+      'setTimeout',
+      'clearTimeout',
+    ]
+
+    afterEach(() => {
+      jest.useRealTimers()
+    })
+
+    it('still counts a record from earlier the same BRT week even after the UTC week has rolled over', async () => {
+      const created = await createHabit(responsavelToken, networkId, {
+        name: 'Academia semanal',
+        frequency: 'WEEKLY',
+      })
+      const habitId = created.body.id
+
+      // Thursday 08:00 BRT (11:00 UTC) — well inside the same BRT week (Sun–Sat)
+      jest.useFakeTimers({ doNotFake: ALL_TIMERS_EXCEPT_DATE })
+      jest.setSystemTime(new Date('2024-06-13T11:00:00.000Z')) // Thu 13 Jun 08:00 BRT
+
+      const recordRes = await addRecord(responsavelToken, habitId)
+      expect(recordRes.statusCode).toBe(201)
+
+      // Saturday 22:00 BRT == Sunday 01:00 UTC — UTC week has rolled to Sunday
+      // but BRT is still Saturday, so the record is still within this BRT week.
+      jest.setSystemTime(new Date('2024-06-16T01:00:00.000Z')) // Sat 15 Jun 22:00 BRT
+
+      const res = await request(app)
+        .get(`/api/networks/${networkId}/habits`)
+        .set('Authorization', `Bearer ${responsavelToken}`)
+
+      const habit = res.body.find((h) => h.id === habitId)
+      expect(habit.progress.current).toBe(1)
+    })
+  })
+
   // ─── CUSTOM frequency (unchanged: no progress) ──────────────────────────
 
   describe('CUSTOM frequency habit', () => {
