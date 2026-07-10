@@ -1,5 +1,10 @@
 const prisma = require('../config/prisma');
 const { startOfDay, startOfWeek, endOfDay, endOfWeek } = require('date-fns');
+const { toZonedTime, fromZonedTime } = require('date-fns-tz');
+
+// The app currently serves Brazil users exclusively; anchor "today"/"this week"
+// boundaries to this timezone regardless of the server process's own TZ.
+const APP_TIMEZONE = 'America/Sao_Paulo';
 
 class HabitService {
   async create(networkId, data) {
@@ -84,13 +89,14 @@ class HabitService {
   async calculateProgress(habit) {
     let startDate, endDate;
     const now = new Date();
+    const zonedNow = toZonedTime(now, APP_TIMEZONE);
 
     if (habit.frequency === 'DAILY') {
-      startDate = startOfDay(now);
-      endDate = endOfDay(now);
+      startDate = fromZonedTime(startOfDay(zonedNow), APP_TIMEZONE);
+      endDate = fromZonedTime(endOfDay(zonedNow), APP_TIMEZONE);
     } else if (habit.frequency === 'WEEKLY') {
-      startDate = startOfWeek(now);
-      endDate = endOfWeek(now);
+      startDate = fromZonedTime(startOfWeek(zonedNow), APP_TIMEZONE);
+      endDate = fromZonedTime(endOfWeek(zonedNow), APP_TIMEZONE);
     } else {
       return null;
     }

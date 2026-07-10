@@ -154,6 +154,76 @@ describe('Habits', () => {
     })
   })
 
+  // ─── DAILY habit day boundary (America/Sao_Paulo, not server TZ) ───────
+
+  describe('DAILY habit day boundary anchored to America/Sao_Paulo', () => {
+    const ALL_TIMERS_EXCEPT_DATE = [
+      'hrtime',
+      'nextTick',
+      'performance',
+      'queueMicrotask',
+      'requestAnimationFrame',
+      'cancelAnimationFrame',
+      'requestIdleCallback',
+      'cancelIdleCallback',
+      'setImmediate',
+      'clearImmediate',
+      'setInterval',
+      'clearInterval',
+      'setTimeout',
+      'clearTimeout',
+    ]
+
+    afterEach(() => {
+      jest.useRealTimers()
+    })
+
+    it('still counts a record from earlier the same BRT day even after the UTC calendar date has rolled over', async () => {
+      const created = await createHabit(responsavelToken, networkId, { name: 'Caminhada diária' })
+      const habitId = created.body.id
+
+      // 08:00 BRT == 11:00 UTC, same calendar day in both zones.
+      jest.useFakeTimers({ doNotFake: ALL_TIMERS_EXCEPT_DATE })
+      jest.setSystemTime(new Date('2024-06-10T11:00:00.000Z'))
+
+      const recordRes = await addRecord(responsavelToken, habitId)
+      expect(recordRes.statusCode).toBe(201)
+
+      // 22:00 BRT the *same* BRT day == 01:00 UTC the *next* UTC day.
+      jest.setSystemTime(new Date('2024-06-11T01:00:00.000Z'))
+
+      const res = await request(app)
+        .get(`/api/networks/${networkId}/habits`)
+        .set('Authorization', `Bearer ${responsavelToken}`)
+
+      const habit = res.body.find((h) => h.id === habitId)
+      expect(habit.progress.current).toBe(1)
+    })
+
+    it('excludes a record from the BRT previous day even when it falls on the same UTC calendar day as "now"', async () => {
+      const created = await createHabit(responsavelToken, networkId, { name: 'Caminhada diária' })
+      const habitId = created.body.id
+
+      // 23:59:59 BRT on 2024-06-09 == 02:59:59 UTC on 2024-06-10.
+      jest.useFakeTimers({ doNotFake: ALL_TIMERS_EXCEPT_DATE })
+      jest.setSystemTime(new Date('2024-06-10T02:59:59.000Z'))
+
+      const recordRes = await addRecord(responsavelToken, habitId)
+      expect(recordRes.statusCode).toBe(201)
+
+      // 08:00 BRT on 2024-06-10 == 11:00 UTC on 2024-06-10 (same UTC calendar
+      // day as the record above, but a different BRT calendar day).
+      jest.setSystemTime(new Date('2024-06-10T11:00:00.000Z'))
+
+      const res = await request(app)
+        .get(`/api/networks/${networkId}/habits`)
+        .set('Authorization', `Bearer ${responsavelToken}`)
+
+      const habit = res.body.find((h) => h.id === habitId)
+      expect(habit.progress.current).toBe(0)
+    })
+  })
+
   // ─── CUSTOM frequency (unchanged: no progress) ──────────────────────────
 
   describe('CUSTOM frequency habit', () => {
