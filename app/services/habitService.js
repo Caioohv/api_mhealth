@@ -82,8 +82,6 @@ class HabitService {
   }
 
   async calculateProgress(habit) {
-    if (!habit.goal) return null;
-
     let startDate, endDate;
     const now = new Date();
 
@@ -108,11 +106,13 @@ class HabitService {
     });
 
     const current = records.reduce((sum, record) => sum + (record.value || 1), 0);
-    const percentage = Math.min(Math.round((current / habit.goal) * 100), 100);
+    const percentage = habit.goal
+      ? Math.min(Math.round((current / habit.goal) * 100), 100)
+      : null;
 
     return {
       current,
-      goal: habit.goal,
+      goal: habit.goal ?? null,
       percentage,
       period: habit.frequency
     };
