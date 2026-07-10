@@ -47,6 +47,12 @@ class ConsultationService {
   }
 
   async update(id, data) {
+    const existing = await prisma.consultation.findUnique({ where: { id } });
+    if (!existing) {
+      const error = new Error('Consulta/Procedimento não encontrado');
+      error.statusCode = 404;
+      throw error;
+    }
     return await prisma.consultation.update({
       where: { id },
       data
@@ -54,12 +60,24 @@ class ConsultationService {
   }
 
   async remove(id) {
+    const existing = await prisma.consultation.findUnique({ where: { id } });
+    if (!existing) {
+      const error = new Error('Consulta/Procedimento não encontrado');
+      error.statusCode = 404;
+      throw error;
+    }
     return await prisma.consultation.delete({
       where: { id }
     });
   }
 
   async updateAttendance(id, attendanceStatus) {
+    const existing = await prisma.consultation.findUnique({ where: { id } });
+    if (!existing) {
+      const error = new Error('Consulta/Procedimento não encontrado');
+      error.statusCode = 404;
+      throw error;
+    }
     return await prisma.consultation.update({
       where: { id },
       data: { attendanceStatus }

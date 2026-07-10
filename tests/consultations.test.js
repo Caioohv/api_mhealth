@@ -245,6 +245,18 @@ describe('Consultations', () => {
 
       expect(res.statusCode).toBe(401)
     })
+
+    it('should return 404 (not 500) when consultation id does not exist', async () => {
+      const nonExistentId = '00000000-0000-0000-0000-000000000000'
+
+      const res = await request(app)
+        .patch(`/api/consultations/${nonExistentId}`)
+        .set('Authorization', `Bearer ${responsavelToken}`)
+        .send({ title: 'Titulo atualizado', date: new Date(Date.now() + 86400000).toISOString() })
+
+      expect(res.statusCode).toBe(404)
+      expect(res.body).toHaveProperty('status', 'error')
+    })
   })
 
   // ─── PATCH /api/consultations/:id/attendance ───────────────────────────────
@@ -316,6 +328,19 @@ describe('Consultations', () => {
 
       expect(res.statusCode).toBe(401)
     })
+
+    it('should return 404 (not 500) when consultation id does not exist', async () => {
+      const nonExistentId = '00000000-0000-0000-0000-000000000000'
+
+      const res = await request(app)
+        .patch(`/api/consultations/${nonExistentId}/attendance`)
+        .set('Authorization', `Bearer ${responsavelToken}`)
+        .send({ attendanceStatus: 'ATTENDED' })
+
+      expect(res.statusCode).toBe(404)
+      expect(res.body).toHaveProperty('status', 'error')
+      expect(res.body).toHaveProperty('message')
+    })
   })
 
   // ─── DELETE /api/consultations/:id ────────────────────────────────────────
@@ -339,6 +364,17 @@ describe('Consultations', () => {
       const res = await request(app).delete(`/api/consultations/${id}`)
 
       expect(res.statusCode).toBe(401)
+    })
+
+    it('should return 404 (not 500) when consultation id does not exist', async () => {
+      const nonExistentId = '00000000-0000-0000-0000-000000000000'
+
+      const res = await request(app)
+        .delete(`/api/consultations/${nonExistentId}`)
+        .set('Authorization', `Bearer ${responsavelToken}`)
+
+      expect(res.statusCode).toBe(404)
+      expect(res.body).toHaveProperty('status', 'error')
     })
   })
 
