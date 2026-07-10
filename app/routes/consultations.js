@@ -2,7 +2,7 @@ const consultationController = require('../controllers/consultationController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const checkPermission = require('../middlewares/checkPermission');
 const validate = require('../middlewares/validate');
-const { consultationSchema } = require('../validators/consultation');
+const { consultationSchema, attendanceSchema } = require('../validators/consultation');
 
 module.exports = (app) => {
   app.post(
@@ -26,5 +26,6 @@ module.exports = (app) => {
 
   app.get('/api/consultations/:id', authMiddleware, consultationController.getDetails);
   app.patch('/api/consultations/:id', authMiddleware, validate(consultationSchema), consultationController.update);
+  app.patch('/api/consultations/:id/attendance', authMiddleware, validate(attendanceSchema), consultationController.updateAttendance);
   app.delete('/api/consultations/:id', authMiddleware, consultationController.remove);
 };

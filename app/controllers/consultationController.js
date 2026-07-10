@@ -56,6 +56,17 @@ class ConsultationController {
     }
   }
 
+  async updateAttendance(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { attendanceStatus } = req.body;
+      const consultation = await consultationService.updateAttendance(id, attendanceStatus);
+      res.json(consultation);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getReminders(req, res, next) {
     try {
       const { id: networkId } = req.params;

@@ -59,6 +59,13 @@ class ConsultationService {
     });
   }
 
+  async updateAttendance(id, attendanceStatus) {
+    return await prisma.consultation.update({
+      where: { id },
+      data: { attendanceStatus }
+    });
+  }
+
   async getUpcomingReminders(networkId, daysAhead = 2) {
     const now = new Date();
     const horizon = addDays(now, daysAhead);

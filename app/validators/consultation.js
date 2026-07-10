@@ -9,6 +9,13 @@ const consultationSchema = z.object({
   notes: z.string().optional(),
 });
 
+const attendanceSchema = z.object({
+  attendanceStatus: z.enum(['PENDING', 'ATTENDED', 'MISSED'], {
+    message: 'Status de comparecimento inválido',
+  }),
+});
+
 module.exports = {
   consultationSchema,
+  attendanceSchema,
 };
