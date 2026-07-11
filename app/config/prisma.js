@@ -1,15 +1,23 @@
 const { PrismaClient } = require('@prisma/client')
 
-function createTestClient() {
-  const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3')
+let prisma
 
-  const url = process.env.DATABASE_URL ?? 'file:./test.db'
-  const adapter = new PrismaBetterSqlite3({ url })
+if (process.env.NODE_ENV === 'test') {
+  // In test mode, use the dedicated SQLite client generated from schema.sqlite.prisma.
+  // Prisma 7 (WASM engine) requires a driver adapter; use @prisma/adapter-libsql for SQLite.
+  const path = require('path')
+  const { PrismaLibSql } = require('@prisma/adapter-libsql')
+  const { PrismaClient: TestPrismaClient } = require('../../node_modules/.prisma/test-client')
 
-  return new PrismaClient({ adapter, log: ['error'] })
-}
-
-function createProductionClient() {
+  const dbUrl = process.env.DATABASE_URL || 'file:./test.db'
+  // libsql requires an absolute file URL; resolve relative paths.
+  const resolvedUrl = dbUrl.startsWith('file:') && !dbUrl.startsWith('file:/')
+    ? 'file:' + path.resolve(dbUrl.replace(/^file:/, ''))
+    : dbUrl
+  // PrismaLibSql is a factory that accepts { url } config, not a libsql client instance.
+  const adapter = new PrismaLibSql({ url: resolvedUrl })
+  prisma = new TestPrismaClient({ adapter })
+} else {
   const { PrismaMariaDb } = require('@prisma/adapter-mariadb')
 
   const adapter = new PrismaMariaDb({
@@ -21,14 +29,7 @@ function createProductionClient() {
     connectionLimit: 10,
   })
 
-  return new PrismaClient({ adapter })
+  prisma = new PrismaClient({ adapter })
 }
 
-const globalForPrisma = global
-
-if (!globalForPrisma.prisma) {
-  globalForPrisma.prisma =
-    process.env.NODE_ENV === 'test' ? createTestClient() : createProductionClient()
-}
-
-module.exports = globalForPrisma.prisma
+module.exports = prisma
