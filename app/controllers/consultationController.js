@@ -60,7 +60,8 @@ class ConsultationController {
     try {
       const { id } = req.params;
       const { attendanceStatus } = req.body;
-      const consultation = await consultationService.updateAttendance(id, attendanceStatus);
+      const userId = req.user.id;
+      const consultation = await consultationService.updateAttendance(id, attendanceStatus, userId);
       res.json(consultation);
     } catch (error) {
       next(error);

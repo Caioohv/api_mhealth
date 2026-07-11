@@ -11,7 +11,7 @@ const consultationSchema = z.object({
 
 const attendanceSchema = z.object({
   attendanceStatus: z.enum(['PENDING', 'ATTENDED', 'MISSED'], {
-    message: 'Status de comparecimento inválido',
+    errorMap: () => ({ message: 'Status de comparecimento inválido. Use PENDING, ATTENDED ou MISSED.' }),
   }),
 });
 

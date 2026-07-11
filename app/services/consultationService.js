@@ -71,16 +71,29 @@ class ConsultationService {
     });
   }
 
-  async updateAttendance(id, attendanceStatus) {
-    const existing = await prisma.consultation.findUnique({ where: { id } });
-    if (!existing) {
-      const error = new Error('Consulta/Procedimento não encontrado');
-      error.statusCode = 404;
+  async updateAttendance(id, attendanceStatus, userId) {
+    const consultation = await this.findById(id);
+
+    const levels = { NONE: 0, VIEW: 1, EDIT: 2 };
+    const member = await prisma.networkMember.findUnique({
+      where: { userId_networkId: { userId, networkId: consultation.networkId } },
+    });
+
+    if (!member) {
+      const error = new Error('Você não é membro desta rede');
+      error.statusCode = 403;
       throw error;
     }
+
+    if (levels[member.consultationAccess] < levels['EDIT']) {
+      const error = new Error('Permissão insuficiente para registrar comparecimento');
+      error.statusCode = 403;
+      throw error;
+    }
+
     return await prisma.consultation.update({
       where: { id },
-      data: { attendanceStatus }
+      data: { attendanceStatus },
     });
   }
 
