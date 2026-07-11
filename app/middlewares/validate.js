@@ -17,13 +17,17 @@ const validate = (schema, property = 'body') => {
         validationError.statusCode = 400;
         
         // Formata os erros do Zod para uma estrutura mais amigável
-        validationError.details = error.issues.map(err => ({
+        // Zod v4 uses error.issues; fall back to error.errors for v3 compatibility
+        const issues = error.issues ?? error.errors ?? [];
+        validationError.details = issues.map(err => ({
           path: err.path.join('.'),
           message: err.message,
         }));
         
         // Adiciona a mensagem formatada para que o middleware de erro possa exibir
-        validationError.message = `Erro de validação: ${validationError.details.map(d => `${d.path}: ${d.message}`).join(', ')}`;
+        validationError.message = validationError.details.length > 0
+          ? `Erro de validação: ${validationError.details.map(d => `${d.path}: ${d.message}`).join(', ')}`
+          : 'Erro de validação';
         
         return next(validationError);
       }

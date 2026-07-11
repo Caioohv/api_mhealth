@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { execSync } = require('child_process');
 const prisma = require('../../app/config/prisma');
 
@@ -14,10 +15,10 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  // Disable FK checks so tables can be deleted in any order
+  // Clean database between tests to ensure isolation.
+  // Disable FK constraints while cleaning so we can delete in any order.
   await prisma.$executeRawUnsafe('PRAGMA foreign_keys = OFF;');
 
-  // Clean database between tests to ensure isolation
   const tablenames = await prisma.$queryRaw`
     SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE '_prisma_migrations';
   `;
