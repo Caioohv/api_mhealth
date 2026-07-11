@@ -7,6 +7,33 @@ const { toZonedTime, fromZonedTime } = require('date-fns-tz');
 const APP_TIMEZONE = 'America/Sao_Paulo';
 
 class HabitService {
+  // ─── Window helpers ────────────────────────────────────────────────────────
+
+  /** Returns the start/end of today in the server's local timezone (Brazil UTC-3). */
+  getTodayWindow() {
+    const now = new Date();
+    const zonedNow = toZonedTime(now, APP_TIMEZONE);
+    return {
+      startDate: fromZonedTime(startOfDay(zonedNow), APP_TIMEZONE),
+      endDate: fromZonedTime(endOfDay(zonedNow), APP_TIMEZONE),
+    };
+  }
+
+  /**
+   * Returns the start/end of the current week.
+   * weekStartsOn: 1 = Monday (pt-BR convention).
+   */
+  getWeekWindow() {
+    const now = new Date();
+    const zonedNow = toZonedTime(now, APP_TIMEZONE);
+    return {
+      startDate: fromZonedTime(startOfWeek(zonedNow, { weekStartsOn: 1 }), APP_TIMEZONE),
+      endDate: fromZonedTime(endOfWeek(zonedNow, { weekStartsOn: 1 }), APP_TIMEZONE),
+    };
+  }
+
+  // ─── CRUD ──────────────────────────────────────────────────────────────────
+
   async create(networkId, data) {
     return await prisma.habit.create({
       data: {
@@ -22,11 +49,65 @@ class HabitService {
       orderBy: { createdAt: 'desc' }
     });
 
-    // Add progress for each habit
-    return await Promise.all(habits.map(async (habit) => {
-      const progress = await this.calculateProgress(habit);
-      return { ...habit, progress };
-    }));
+    if (habits.length === 0) return [];
+
+    const habitIds = habits.map(h => h.id);
+    const { startDate: todayStart, endDate: todayEnd } = this.getTodayWindow();
+
+    // Single batch query covers both completedToday and DAILY progress calculation.
+    const todayRecords = await prisma.habitRecord.findMany({
+      where: {
+        habitId: { in: habitIds },
+        completedAt: { gte: todayStart, lte: todayEnd },
+      },
+    });
+
+    // Group today's records by habitId for O(1) lookup.
+    const todayByHabit = new Map();
+    for (const record of todayRecords) {
+      if (!todayByHabit.has(record.habitId)) todayByHabit.set(record.habitId, []);
+      todayByHabit.get(record.habitId).push(record);
+    }
+
+    // Fetch weekly records only for habits that need them (goal + WEEKLY frequency).
+    const weeklyHabits = habits.filter(h => h.goal && h.frequency === 'WEEKLY');
+    const weeklyByHabit = new Map();
+    if (weeklyHabits.length > 0) {
+      const { startDate: weekStart, endDate: weekEnd } = this.getWeekWindow();
+      const weekRecords = await prisma.habitRecord.findMany({
+        where: {
+          habitId: { in: weeklyHabits.map(h => h.id) },
+          completedAt: { gte: weekStart, lte: weekEnd },
+        },
+      });
+      for (const record of weekRecords) {
+        if (!weeklyByHabit.has(record.habitId)) weeklyByHabit.set(record.habitId, []);
+        weeklyByHabit.get(record.habitId).push(record);
+      }
+    }
+
+    return habits.map(habit => {
+      const todaysRecs = todayByHabit.get(habit.id) ?? [];
+      // completedToday: at least one HabitRecord exists within today's window.
+      const completedToday = todaysRecs.length > 0;
+
+      if (!habit.goal) return { ...habit, completedToday, progress: null };
+
+      let records, period;
+      if (habit.frequency === 'DAILY') {
+        records = todaysRecs;
+        period = 'DAILY';
+      } else if (habit.frequency === 'WEEKLY') {
+        records = weeklyByHabit.get(habit.id) ?? [];
+        period = 'WEEKLY';
+      } else {
+        return { ...habit, completedToday, progress: null };
+      }
+
+      const current = records.reduce((sum, r) => sum + (r.value || 1), 0);
+      const percentage = Math.min(Math.round((current / habit.goal) * 100), 100);
+      return { ...habit, completedToday, progress: { current, goal: habit.goal, percentage, period } };
+    });
   }
 
   async findById(id) {
@@ -49,8 +130,16 @@ class HabitService {
       throw error;
     }
 
+    const { startDate: todayStart, endDate: todayEnd } = this.getTodayWindow();
+    const todayCount = await prisma.habitRecord.count({
+      where: {
+        habitId: id,
+        completedAt: { gte: todayStart, lte: todayEnd },
+      },
+    });
+    const completedToday = todayCount > 0;
     const progress = await this.calculateProgress(habit);
-    return { ...habit, progress };
+    return { ...habit, completedToday, progress };
   }
 
   async update(id, data) {
@@ -95,8 +184,8 @@ class HabitService {
       startDate = fromZonedTime(startOfDay(zonedNow), APP_TIMEZONE);
       endDate = fromZonedTime(endOfDay(zonedNow), APP_TIMEZONE);
     } else if (habit.frequency === 'WEEKLY') {
-      startDate = fromZonedTime(startOfWeek(zonedNow), APP_TIMEZONE);
-      endDate = fromZonedTime(endOfWeek(zonedNow), APP_TIMEZONE);
+      startDate = fromZonedTime(startOfWeek(zonedNow, { weekStartsOn: 1 }), APP_TIMEZONE);
+      endDate = fromZonedTime(endOfWeek(zonedNow, { weekStartsOn: 1 }), APP_TIMEZONE);
     } else {
       return null;
     }
