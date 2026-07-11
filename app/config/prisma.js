@@ -9,11 +9,13 @@ if (process.env.NODE_ENV === 'test') {
   const { PrismaLibSql } = require('@prisma/adapter-libsql')
   const { PrismaClient: TestPrismaClient } = require('../../node_modules/.prisma/test-client')
 
-  const dbUrl = process.env.DATABASE_URL || 'file:./test.db'
+  // In test mode always use the SQLite file. DATABASE_URL from .env points to
+  // production MySQL and must not be passed to PrismaLibSql (libsql-only adapter).
+  const rawUrl = process.env.TEST_DATABASE_URL || 'file:./test.db'
   // libsql requires an absolute file URL; resolve relative paths.
-  const resolvedUrl = dbUrl.startsWith('file:') && !dbUrl.startsWith('file:/')
-    ? 'file:' + path.resolve(dbUrl.replace(/^file:/, ''))
-    : dbUrl
+  const resolvedUrl = rawUrl.startsWith('file:') && !rawUrl.startsWith('file:/')
+    ? 'file:' + path.resolve(rawUrl.replace(/^file:/, ''))
+    : rawUrl
   // PrismaLibSql is a factory that accepts { url } config, not a libsql client instance.
   const adapter = new PrismaLibSql({ url: resolvedUrl })
   prisma = new TestPrismaClient({ adapter })
