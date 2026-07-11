@@ -67,6 +67,12 @@ enum HabitFrequency {
   CUSTOM
 }
 
+enum AttendanceStatus {
+  PENDING
+  ATTENDED
+  MISSED
+}
+
 enum EmergencyStatus {
   ACTIVE
   RESOLVED
