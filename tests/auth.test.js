@@ -21,7 +21,7 @@ describe('Auth Endpoints', () => {
         .send(testUser);
 
       expect(res.statusCode).toEqual(201);
-      expect(res.body).toHaveProperty('token');
+      expect(res.body).toHaveProperty('accessToken');
       expect(res.body.user).toHaveProperty('email', testUser.email);
       expect(res.body.user).toHaveProperty('name', testUser.name);
     });
@@ -54,7 +54,7 @@ describe('Auth Endpoints', () => {
         });
 
       expect(res.statusCode).toEqual(200);
-      expect(res.body).toHaveProperty('token');
+      expect(res.body).toHaveProperty('accessToken');
       expect(res.body.user).toHaveProperty('email', testUser.email);
     });
 

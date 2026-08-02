@@ -69,8 +69,8 @@ class HabitService {
       todayByHabit.get(record.habitId).push(record);
     }
 
-    // Fetch weekly records only for habits that need them (goal + WEEKLY frequency).
-    const weeklyHabits = habits.filter(h => h.goal && h.frequency === 'WEEKLY');
+    // Fetch weekly records only for habits that need them (WEEKLY frequency).
+    const weeklyHabits = habits.filter(h => h.frequency === 'WEEKLY');
     const weeklyByHabit = new Map();
     if (weeklyHabits.length > 0) {
       const { startDate: weekStart, endDate: weekEnd } = this.getWeekWindow();
@@ -91,8 +91,6 @@ class HabitService {
       // completedToday: at least one HabitRecord exists within today's window.
       const completedToday = todaysRecs.length > 0;
 
-      if (!habit.goal) return { ...habit, completedToday, progress: null };
-
       let records, period;
       if (habit.frequency === 'DAILY') {
         records = todaysRecs;
@@ -105,8 +103,19 @@ class HabitService {
       }
 
       const current = records.reduce((sum, r) => sum + (r.value || 1), 0);
-      const percentage = Math.min(Math.round((current / habit.goal) * 100), 100);
-      return { ...habit, completedToday, progress: { current, goal: habit.goal, percentage, period } };
+      const percentage = habit.goal
+        ? Math.min(Math.round((current / habit.goal) * 100), 100)
+        : null;
+      return {
+        ...habit,
+        completedToday,
+        progress: {
+          current,
+          goal: habit.goal ?? null,
+          percentage,
+          period,
+        },
+      };
     });
   }
 

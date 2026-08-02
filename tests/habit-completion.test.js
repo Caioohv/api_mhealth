@@ -78,8 +78,10 @@ describe('GET /api/networks/:networkId/habits — completedToday', () => {
     const habit = res.body.find(h => h.id === habitId);
     expect(habit).toBeDefined();
     expect(habit.completedToday).toBe(true);
-    // No goal → progress is still null
-    expect(habit.progress).toBeNull();
+    // No goal → goal and percentage are null, but current count is calculated
+    expect(habit.progress).not.toBeNull();
+    expect(habit.progress.goal).toBeNull();
+    expect(habit.progress.current).toBe(1);
   });
 
   // AC-3: record from yesterday → completedToday: false

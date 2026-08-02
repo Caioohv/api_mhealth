@@ -11,7 +11,9 @@ class AuthService {
 
     const existingUser = await prisma.user.findUnique({ where: { email } })
     if (existingUser) {
-      throw new Error('User already exists')
+      const error = new Error('User already exists')
+      error.statusCode = 409
+      throw error
     }
 
     const passwordHash = await bcrypt.hash(password, 10)
@@ -31,12 +33,16 @@ class AuthService {
   async login(email, password) {
     const user = await prisma.user.findUnique({ where: { email } })
     if (!user || !user.passwordHash) {
-      throw new Error('Invalid credentials')
+      const error = new Error('Invalid credentials')
+      error.statusCode = 401
+      throw error
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.passwordHash)
     if (!isPasswordValid) {
-      throw new Error('Invalid credentials')
+      const error = new Error('Invalid credentials')
+      error.statusCode = 401
+      throw error
     }
 
     return this.generateTokens(user)
