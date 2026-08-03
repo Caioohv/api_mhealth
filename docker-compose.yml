@@ -6,8 +6,8 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
-      DATABASE_URL: mysql://viier:viier@mhealth_mysql:3306/mhealth
-      DATABASE_HOST: mhealth_mysql
+      DATABASE_URL: mysql://viier:viier@global_mysql:3306/mhealth
+      DATABASE_HOST: global_mysql
       DATABASE_PORT: 3306
       DATABASE_USER: viier
       DATABASE_PASSWORD: viier
